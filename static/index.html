@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cliora — Transcrição de Documentos Históricos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap');
+
+  :root {
+    --navy:      #111e38;
+    --navy-dark: #0c1628;
+    --gold:      #c9a84c;
+    --gold-lt:   #e4c06e;
+    --bg:        #f5f0e8;
+    --surface:   #faf7f2;
+    --border:    #d4c9b0;
+    --ink:       #1a1a2e;
+    --ink2:      #4a4560;
+    --success:   #2d6a4f;
+    --error:     #7b2020;
+    --radius:    6px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── cabeçalho ── */
+  header {
+    background: var(--navy);
+    padding: 0.75rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+  }
+
+  header img {
+    height: 52px;
+    width: auto;
+    display: block;
+  }
+
+  .header-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(201,168,76,0.35);
+  }
+
+  .header-text h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #f5f0e8;
+    letter-spacing: 0.02em;
+  }
+
+  .header-text span {
+    font-size: 0.78rem;
+    color: var(--gold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-style: normal;
+    font-weight: 300;
+  }
+
+  /* ── ornamento ── */
+  .ornament {
+    text-align: center;
+    padding: 0.4rem;
+    color: var(--gold);
+    font-size: 0.9rem;
+    letter-spacing: 0.4em;
+    background: var(--navy-dark);
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+
+  /* ── conteúdo ── */
+  main {
+    flex: 1;
+    max-width: 660px;
+    width: 100%;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ── card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: 0 3px 12px rgba(17,30,56,0.08);
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--navy);
+  }
+
+  /* ── form ── */
+  .field { margin-bottom: 1.25rem; }
+
+  label {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--ink2);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 400;
+  }
+
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.95rem;
+    appearance: none;
+    transition: border-color 0.2s;
+  }
+  input[type="number"]:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 2px rgba(201,168,76,0.2);
+  }
+
+  /* ── drop zone ── */
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 2rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: var(--bg);
+  }
+  .drop-zone:hover,
+  .drop-zone.over {
+    border-color: var(--gold);
+    background: #fdf8ee;
+  }
+  .drop-zone.has-file {
+    border-color: var(--success);
+    background: #f0f7f3;
+  }
+
+  .drop-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .drop-text { font-size: 0.88rem; color: var(--ink2); font-style: italic; }
+  .drop-file-name { font-size: 0.92rem; color: var(--success); margin-top: 0.4rem; }
+  input[type="file"] { display: none; }
+
+  /* ── hint ── */
+  .field-hint {
+    font-size: 0.78rem;
+    color: var(--ink2);
+    font-style: italic;
+    margin-top: 0.3rem;
+  }
+
+  /* ── botão ── */
+  button[type="submit"] {
+    width: 100%;
+    padding: 0.85rem;
+    background: var(--navy);
+    color: var(--gold-lt);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: var(--radius);
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.2s, color 0.2s;
+    margin-top: 0.5rem;
+  }
+  button[type="submit"]:hover {
+    background: var(--navy-dark);
+    color: var(--gold);
+  }
+  button[type="submit"]:disabled {
+    background: var(--border);
+    color: #999;
+    cursor: not-allowed;
+    border-color: transparent;
+  }
+
+  /* ── progresso ── */
+  #status-box { display: none; margin-top: 1.5rem; }
+
+  .progress-bar-track {
+    height: 5px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0.75rem 0;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--navy), var(--gold));
+    border-radius: 3px;
+    transition: width 0.6s ease;
+    width: 0%;
+  }
+  .status-msg {
+    font-size: 0.88rem;
+    color: var(--ink2);
+    font-style: italic;
+  }
+
+  /* ── resultado ── */
+  #result-box { display: none; margin-top: 1.5rem; }
+
+  .result-success {
+    padding: 1.25rem;
+    border: 1px solid rgba(45,106,79,0.4);
+    border-left: 4px solid var(--success);
+    border-radius: var(--radius);
+    background: #f0f7f3;
+    text-align: center;
+  }
+  .result-success p {
+    font-size: 0.92rem;
+    color: var(--success);
+    margin-bottom: 1rem;
+  }
+  .btn-download {
+    display: inline-block;
+    padding: 0.65rem 1.5rem;
+    background: var(--navy);
+    color: var(--gold-lt);
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.92rem;
+    transition: background 0.2s;
+    border: 1px solid rgba(201,168,76,0.3);
+  }
+  .btn-download:hover {
+    background: var(--navy-dark);
+    color: var(--gold);
+  }
+
+  .result-error {
+    padding: 1.25rem;
+    border: 1px solid rgba(123,32,32,0.3);
+    border-left: 4px solid var(--error);
+    border-radius: var(--radius);
+    background: #fdf2f2;
+    font-size: 0.88rem;
+    color: var(--error);
+  }
+
+  /* ── nota ── */
+  .nota {
+    font-size: 0.78rem;
+    color: var(--ink2);
+    font-style: italic;
+    margin-top: 1.25rem;
+    line-height: 1.6;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── rodapé ── */
+  footer {
+    text-align: center;
+    padding: 1.25rem;
+    font-size: 0.75rem;
+    color: rgba(245,240,232,0.5);
+    background: var(--navy-dark);
+    font-style: italic;
+    letter-spacing: 0.03em;
+  }
+  footer span {
+    color: var(--gold);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="/static/logo.png" alt="Cliora">
+  <div class="header-divider"></div>
+  <div class="header-text">
+    <h1>Cliora</h1>
+    <span>Transcrição de Documentos Históricos</span>
+  </div>
+</header>
+<div class="ornament">— ✦ —</div>
+
+<main>
+  <div class="card">
+    <h2 class="card-title">Enviar documento para transcrição</h2>
+
+    <form id="upload-form">
+      <div class="field">
+        <label for="arquivo">Arquivo PDF</label>
+        <div class="drop-zone" id="drop-zone">
+          <div class="drop-icon">📄</div>
+          <div class="drop-text">Clique para selecionar ou arraste o PDF aqui</div>
+          <div class="drop-file-name" id="file-name"></div>
+          <input type="file" id="arquivo" name="arquivo" accept=".pdf" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="ano">Ano do documento original</label>
+        <input type="number" id="ano" name="ano" min="1400" max="2025"
+               placeholder="Ex: 1879, 1942, 1978" required>
+        <p class="field-hint">Use o ano em que o documento foi escrito, não o ano da edição escaneada.</p>
+      </div>
+
+      <div class="field">
+        <label for="tipo">Tipo do documento</label>
+        <select id="tipo" name="tipo">
+          <option value="livro">Livro ou texto literário</option>
+          <option value="juridico">Documento jurídico (processo, acórdão, lei, decreto)</option>
+          <option value="periodico">Periódico (jornal, revista)</option>
+          <option value="administrativo">Documento administrativo (ofício, relatório, carta)</option>
+        </select>
+      </div>
+
+      <button type="submit" id="btn-enviar">Transcrever documento</button>
+    </form>
+
+    <div id="status-box">
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <p class="status-msg" id="status-msg">Iniciando...</p>
+    </div>
+
+    <div id="result-box"></div>
+
+    <p class="nota">
+      Apenas arquivos PDF são aceitos. Para converter imagens para PDF: no Mac, abra no Preview
+      e exporte como PDF; no Windows, selecione as imagens e imprima para PDF.
+      O processamento pode levar alguns minutos dependendo do número de páginas.
+    </p>
+  </div>
+</main>
+
+<footer>
+  Universidade de Passo Fundo &nbsp;·&nbsp; <span>Cliora</span> &nbsp;·&nbsp; Transcrição de Documentos Históricos
+</footer>
+
+<script>
+const dropZone  = document.getElementById('drop-zone');
+const fileInput = document.getElementById('arquivo');
+const fileName  = document.getElementById('file-name');
+const form      = document.getElementById('upload-form');
+const btnEnviar = document.getElementById('btn-enviar');
+const statusBox = document.getElementById('status-box');
+const resultBox = document.getElementById('result-box');
+const progressFill = document.getElementById('progress-fill');
+const statusMsg = document.getElementById('status-msg');
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('over');
+  if (e.dataTransfer.files[0]) {
+    fileInput.files = e.dataTransfer.files;
+    updateFileName(e.dataTransfer.files[0].name);
+  }
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) updateFileName(fileInput.files[0].name);
+});
+
+function updateFileName(name) {
+  fileName.textContent = name;
+  dropZone.classList.add('has-file');
+}
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  btnEnviar.disabled = true;
+  btnEnviar.textContent = 'Enviando...';
+  resultBox.style.display = 'none';
+  statusBox.style.display = 'block';
+  progressFill.style.width = '0%';
+  statusMsg.textContent = 'Enviando arquivo...';
+
+  const data = new FormData(form);
+
+  try {
+    const resp = await fetch('/upload', { method: 'POST', body: data });
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.detail || 'Erro no servidor');
+    }
+    const { job_id } = await resp.json();
+    aguardarResultado(job_id);
+  } catch (err) {
+    mostrarErro(err.message);
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Transcrever documento';
+  }
+});
+
+function aguardarResultado(jobId) {
+  const intervalo = setInterval(async () => {
+    try {
+      const resp = await fetch(`/status/${jobId}`);
+      const estado = await resp.json();
+      progressFill.style.width = estado.progresso + '%';
+      statusMsg.textContent = estado.mensagem || '';
+      if (estado.status === 'concluido') {
+        clearInterval(intervalo);
+        mostrarSucesso(jobId, estado.mensagem);
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = 'Transcrever documento';
+      } else if (estado.status === 'erro') {
+        clearInterval(intervalo);
+        mostrarErro(estado.mensagem);
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = 'Transcrever documento';
+      }
+    } catch { /* ignora erros de rede temporários */ }
+  }, 5000);
+}
+
+function mostrarSucesso(jobId, msg) {
+  statusBox.style.display = 'none';
+  resultBox.style.display = 'block';
+  resultBox.innerHTML = `
+    <div class="result-success">
+      <p>✓ Transcrição concluída — ${msg}</p>
+      <a class="btn-download" href="/download/${jobId}" download>
+        Baixar texto transcrito
+      </a>
+    </div>`;
+}
+
+function mostrarErro(msg) {
+  statusBox.style.display = 'none';
+  resultBox.style.display = 'block';
+  resultBox.innerHTML = `<div class="result-error">Erro: ${msg}</div>`;
+}
+</script>
+</body>
+</html>

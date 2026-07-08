@@ -1,0 +1,28 @@
+# Ambiente Python
+venv/
+__pycache__/
+*.pyc
+
+# Credenciais (precaução futura)
+.env
+*.secret
+
+# PDFs e imagens de trabalho
+*.pdf
+*.jpg
+*.jpeg
+*.png
+
+# Dados de execução e saídas
+input/
+output/
+jobs/
+logs/
+checkpoints/
+
+# JSONs grandes de saída (os pequenos de config entram)
+transcricao_estruturada.json
+resgate_final_gratis.json
+
+# Fac-símiles DjVu do corpus
+*.djvu

@@ -1,0 +1,14 @@
+<noinclude><pagequality level="4" user="Ceciliawolf" />{{rh|1={{#ifeq:{{#expr:{{SUBPAGENAME}} mod 2}}|0|{{#expr:{{SUBPAGENAME}} - 10}}}}|2={{smaller|OS MAIAS}}|3={{#ifeq:{{#expr:{{SUBPAGENAME}} mod 2}}|1|{{#expr:{{SUBPAGENAME}} - 10}}}}}}
+{{hr}}</noinclude>traje infernal, e com um profundo suspiro começou a desafivelar o talim. Mas o paletot era muito largo, muito comprido; teve de lhe dar uma dobra nas mangas. Depois Carlos metteu-lhe um bonet escossez na cabeça. — ­E assim arranjado, com as canellas vermelhas de diabo apparecendo sob o paletot, a gargantilha escarlate á Carlos IX emergindo da gola, a velha casqueta de viagem na nuca, o pobre Ega tinha o ar lamentavel d’um Satanaz pelintra, agasalhado pela caridade d’um gentleman, e usando-lhe o fato velho.
+
+Baptista allumiou, grave e discreto. Ega ao passar por elle, murmurou: 
+
+— ­Isto vae mal, Baptista, isto vae mal...
+
+O velho creado teve um movimento triste d’hombros, como significando que nada no mundo ia bem.
+
+Na rua negra, a parelha quieta dobrava a cabeça sob a chuva. O ''Canhoto'', ao ouvir fallar d’uma gorgeta de libra, fez um grande espalhafato, rompeu ás chicotadas; e a velha traquitana lá partiu a galope, a escorrer d’agua, atroando a calçada.
+
+Por vezes um coupé particular crusava-os, os casacos de gutta-perche dos criados branquejavam á luz das lanternas. Então a idéa da festa que devia agora resplandecer; Margarida ignorando tudo, walsando nos braços d’outros, anciosa, á espera d’elle; a ceia depois, o champagne, as cousas brilhantes que elle teria dito — ­todas estas delicias perdidas se vinham cravar no coração do pobre Ega, arrancavam-lhe pragas surdas, Carlos fumava silenciosamente, com o pensamento no Hotel Central.
+{{nop}}<noinclude>
+<references/></noinclude>

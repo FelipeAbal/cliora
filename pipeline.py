@@ -319,7 +319,7 @@ def main():
 
     perfil = selecionar_perfil(ano)
     print(f"\nDocumento: {args.arquivo}")
-    print(f"Século: {seculo} | Perfil: {perfil}")
+    print(f"Século: {ano} | Perfil: {perfil}")
 
     # prepara diretórios de saída
     nome_base  = os.path.splitext(os.path.basename(args.arquivo))[0]

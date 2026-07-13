@@ -5,28 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cliora — Transcrição de Documentos Históricos</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap');
 
   :root {
     --navy:      #111e38;
-    --navy-dark: #0c1628;
+    --navy-dark: #0b1425;
     --gold:      #c9a84c;
     --gold-lt:   #e4c06e;
-    --bg:        #f5f0e8;
-    --surface:   #faf7f2;
-    --border:    #d4c9b0;
-    --ink:       #1a1a2e;
-    --ink2:      #4a4560;
+    --gold-deep: #9d8038;
+    --bg:        #f0e9d8;
+    --surface:   #fbf8f0;
+    --border:    #cfc2a2;
+    --frame:     #b3a276;
+    --ink:       #23222f;
+    --ink2:      #5a5470;
     --success:   #2d6a4f;
     --error:     #7b2020;
-    --radius:    6px;
+    --radius:    2px;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     font-family: 'Source Serif 4', Georgia, serif;
-    background: var(--bg);
+    background-color: var(--bg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.36 0 0 0 0 0.30 0 0 0 0 0.18 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
     color: var(--ink);
     min-height: 100vh;
     display: flex;
@@ -36,187 +39,284 @@
   /* ── cabeçalho ── */
   header {
     background: var(--navy);
-    padding: 0.75rem 2rem;
+    padding: 0.85rem 2rem;
     display: flex;
     align-items: center;
     gap: 1.25rem;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    border-bottom: 1px solid rgba(201,168,76,0.45);
   }
 
-  header img {
-    height: 52px;
-    width: auto;
-    display: block;
-  }
+  header img { height: 52px; width: auto; display: block; }
 
-  .header-divider {
-    width: 1px;
-    height: 36px;
-    background: rgba(201,168,76,0.35);
-  }
+  .header-divider { width: 1px; height: 38px; background: rgba(201,168,76,0.35); }
 
   .header-text h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #f5f0e8;
-    letter-spacing: 0.02em;
+    font-size: 1.45rem;
+    font-weight: 500;
+    color: #f3edda;
+    letter-spacing: 0.04em;
   }
 
   .header-text span {
-    font-size: 0.78rem;
+    display: block;
+    margin-top: 0.1rem;
+    font-size: 0.72rem;
     color: var(--gold);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    font-style: normal;
     font-weight: 300;
   }
 
-  /* ── ornamento ── */
+  /* ── ornamento: filete · fleurão · filete ── */
   .ornament {
-    text-align: center;
-    padding: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 18%;
     color: var(--gold);
-    font-size: 0.9rem;
-    letter-spacing: 0.4em;
+    font-size: 0.8rem;
     background: var(--navy-dark);
-    border-bottom: 1px solid rgba(201,168,76,0.2);
+  }
+  .ornament::before, .ornament::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.55), transparent);
   }
 
   /* ── conteúdo ── */
   main {
     flex: 1;
-    max-width: 660px;
+    max-width: 680px;
     width: 100%;
-    margin: 2.5rem auto;
+    margin: 2.75rem auto;
     padding: 0 1.5rem;
   }
 
-  /* ── card ── */
+  /* ── card como fólio: moldura dupla de frontispício ── */
   .card {
+    position: relative;
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-top: 3px solid var(--gold);
+    border: 1px solid var(--frame);
     border-radius: var(--radius);
-    padding: 2rem;
-    box-shadow: 0 3px 12px rgba(17,30,56,0.08);
+    padding: 2.5rem 2.5rem 2.25rem;
+    box-shadow: 0 1px 0 rgba(17,30,56,0.06), 0 14px 34px -18px rgba(17,30,56,0.35);
+    animation: rise 0.55s ease both;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1px solid rgba(157,128,56,0.45);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card { animation: none; }
   }
 
   .card-title {
     font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--border);
+    font-size: 1.28rem;
+    font-weight: 500;
     color: var(--navy);
+    text-align: center;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.01em;
+  }
+  .card-title::after {
+    content: "";
+    display: block;
+    width: 64px;
+    height: 1px;
+    margin: 0.85rem auto 0;
+    background: linear-gradient(90deg, transparent, var(--gold-deep), transparent);
+  }
+
+  /* ── aviso de escopo como nota de rodapé de frontispício ── */
+  .aviso-escopo {
+    font-size: 0.84rem;
+    color: var(--ink2);
+    font-style: italic;
+    line-height: 1.6;
+    padding: 0.9rem 0.25rem 1.1rem;
+    margin-bottom: 1.6rem;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  .aviso-escopo::before {
+    content: "✦";
+    display: block;
+    font-style: normal;
+    color: var(--gold-deep);
+    font-size: 0.7rem;
+    margin-bottom: 0.5rem;
   }
 
   /* ── form ── */
-  .field { margin-bottom: 1.25rem; }
+  .field { margin-bottom: 1.35rem; }
 
   label {
     display: block;
-    font-size: 0.78rem;
-    color: var(--ink2);
-    margin-bottom: 0.4rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 400;
+    font-size: 0.86rem;
+    color: var(--navy);
+    margin-bottom: 0.45rem;
+    font-variant: small-caps;
+    letter-spacing: 0.14em;
+    font-weight: 600;
+  }
+  label .num {
+    font-family: 'Playfair Display', serif;
+    font-variant: normal;
+    font-weight: 500;
+    font-style: italic;
+    color: var(--gold-deep);
+    letter-spacing: 0.02em;
+    margin-right: 0.5rem;
   }
 
+  input[type="text"],
   input[type="number"],
   select {
     width: 100%;
-    padding: 0.6rem 0.85rem;
+    padding: 0.65rem 0.9rem;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    background: var(--bg);
+    background: #f6f1e3;
     color: var(--ink);
     font-family: inherit;
-    font-size: 0.95rem;
+    font-size: 0.96rem;
     appearance: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
   }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%239d8038' stroke-width='1.4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    padding-right: 2.4rem;
+  }
+  input[type="text"]:focus,
   input[type="number"]:focus,
   select:focus {
     outline: none;
-    border-color: var(--gold);
-    box-shadow: 0 0 0 2px rgba(201,168,76,0.2);
+    border-color: var(--gold-deep);
+    background: #fffdf6;
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.18);
   }
+  ::placeholder { color: #a89e85; font-style: italic; }
 
   /* ── drop zone ── */
   .drop-zone {
-    border: 2px dashed var(--border);
+    border: 1px dashed var(--frame);
     border-radius: var(--radius);
-    padding: 2rem 1rem;
+    padding: 1.9rem 1rem 1.7rem;
     text-align: center;
     cursor: pointer;
     transition: border-color 0.2s, background 0.2s;
-    background: var(--bg);
+    background: #f6f1e3;
   }
   .drop-zone:hover,
   .drop-zone.over {
-    border-color: var(--gold);
-    background: #fdf8ee;
+    border-color: var(--gold-deep);
+    background: #fdf8ea;
   }
   .drop-zone.has-file {
+    border-style: solid;
     border-color: var(--success);
-    background: #f0f7f3;
+    background: #f2f7f2;
   }
 
-  .drop-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .drop-icon { margin-bottom: 0.6rem; }
+  .drop-icon svg { display: inline-block; }
   .drop-text { font-size: 0.88rem; color: var(--ink2); font-style: italic; }
-  .drop-file-name { font-size: 0.92rem; color: var(--success); margin-top: 0.4rem; }
+  .drop-file-name { font-size: 0.92rem; color: var(--success); margin-top: 0.45rem; }
   input[type="file"] { display: none; }
 
   /* ── hint ── */
   .field-hint {
-    font-size: 0.78rem;
+    font-size: 0.79rem;
     color: var(--ink2);
     font-style: italic;
-    margin-top: 0.3rem;
+    margin-top: 0.35rem;
+    line-height: 1.55;
   }
+
+  /* ── consentimento ── */
+  .consent label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    font-variant: normal;
+    letter-spacing: normal;
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: var(--ink);
+    cursor: pointer;
+    line-height: 1.55;
+  }
+  .consent input[type="checkbox"] {
+    margin-top: 0.22rem;
+    width: auto;
+    accent-color: var(--navy);
+  }
+  .consent a {
+    color: var(--navy);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid var(--gold);
+  }
+  .consent a:hover { color: var(--gold-deep); }
 
   /* ── botão ── */
   button[type="submit"] {
     width: 100%;
-    padding: 0.85rem;
+    padding: 0.9rem;
     background: var(--navy);
     color: var(--gold-lt);
-    border: 1px solid rgba(201,168,76,0.3);
+    border: 1px solid rgba(201,168,76,0.35);
     border-radius: var(--radius);
     font-family: 'Playfair Display', serif;
-    font-size: 1rem;
+    font-size: 1.02rem;
     cursor: pointer;
-    letter-spacing: 0.04em;
-    transition: background 0.2s, color 0.2s;
-    margin-top: 0.5rem;
+    letter-spacing: 0.08em;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    margin-top: 0.6rem;
   }
   button[type="submit"]:hover {
-    background: var(--navy-dark);
-    color: var(--gold);
+    background: var(--gold);
+    color: var(--navy);
+    border-color: var(--gold);
+  }
+  button[type="submit"]:focus-visible {
+    outline: 2px solid var(--gold-deep);
+    outline-offset: 2px;
   }
   button[type="submit"]:disabled {
     background: var(--border);
-    color: #999;
+    color: #8d8570;
     cursor: not-allowed;
     border-color: transparent;
   }
 
   /* ── progresso ── */
-  #status-box { display: none; margin-top: 1.5rem; }
+  #status-box { display: none; margin-top: 1.6rem; }
 
   .progress-bar-track {
-    height: 5px;
-    background: var(--border);
-    border-radius: 3px;
+    height: 4px;
+    background: #ded2b2;
+    border-radius: 2px;
     overflow: hidden;
-    margin: 0.75rem 0;
+    margin: 0.8rem 0;
   }
   .progress-bar-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--navy), var(--gold));
-    border-radius: 3px;
+    border-radius: 2px;
     transition: width 0.6s ease;
     width: 0%;
   }
@@ -224,17 +324,17 @@
     font-size: 0.88rem;
     color: var(--ink2);
     font-style: italic;
+    text-align: center;
   }
 
   /* ── resultado ── */
-  #result-box { display: none; margin-top: 1.5rem; }
+  #result-box { display: none; margin-top: 1.6rem; }
 
   .result-success {
-    padding: 1.25rem;
+    padding: 1.4rem 1.25rem;
     border: 1px solid rgba(45,106,79,0.4);
-    border-left: 4px solid var(--success);
     border-radius: var(--radius);
-    background: #f0f7f3;
+    background: #f2f7f2;
     text-align: center;
   }
   .result-success p {
@@ -244,29 +344,31 @@
   }
   .btn-download {
     display: inline-block;
-    padding: 0.65rem 1.5rem;
+    padding: 0.7rem 1.7rem;
     background: var(--navy);
     color: var(--gold-lt);
     border-radius: var(--radius);
     text-decoration: none;
     font-family: 'Playfair Display', serif;
-    font-size: 0.92rem;
-    transition: background 0.2s;
-    border: 1px solid rgba(201,168,76,0.3);
+    font-size: 0.94rem;
+    letter-spacing: 0.05em;
+    transition: background 0.2s, color 0.2s;
+    border: 1px solid rgba(201,168,76,0.35);
   }
   .btn-download:hover {
-    background: var(--navy-dark);
-    color: var(--gold);
+    background: var(--gold);
+    color: var(--navy);
   }
 
   .result-error {
     padding: 1.25rem;
     border: 1px solid rgba(123,32,32,0.3);
-    border-left: 4px solid var(--error);
+    border-left: 3px solid var(--error);
     border-radius: var(--radius);
-    background: #fdf2f2;
+    background: #f9efec;
     font-size: 0.88rem;
     color: var(--error);
+    line-height: 1.55;
   }
 
   /* ── nota ── */
@@ -274,24 +376,34 @@
     font-size: 0.78rem;
     color: var(--ink2);
     font-style: italic;
-    margin-top: 1.25rem;
-    line-height: 1.6;
+    margin-top: 1.5rem;
+    line-height: 1.65;
     padding-top: 1rem;
     border-top: 1px solid var(--border);
+    text-align: center;
   }
 
   /* ── rodapé ── */
   footer {
     text-align: center;
-    padding: 1.25rem;
-    font-size: 0.75rem;
-    color: rgba(245,240,232,0.5);
+    padding: 1.3rem 1rem;
+    font-size: 0.76rem;
+    color: rgba(243,237,218,0.55);
     background: var(--navy-dark);
     font-style: italic;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.04em;
+    border-top: 1px solid rgba(201,168,76,0.25);
   }
-  footer span {
-    color: var(--gold);
+  footer span { color: var(--gold); font-style: normal; }
+
+  /* ── telas pequenas ── */
+  @media (max-width: 560px) {
+    header { padding: 0.7rem 1.1rem; gap: 0.9rem; }
+    header img { height: 42px; }
+    .header-text h1 { font-size: 1.2rem; }
+    .header-text span { letter-spacing: 0.14em; font-size: 0.64rem; }
+    main { margin: 1.5rem auto; padding: 0 1rem; }
+    .card { padding: 1.6rem 1.25rem 1.5rem; }
   }
 </style>
 </head>
@@ -305,17 +417,38 @@
     <span>Transcrição de Documentos Históricos</span>
   </div>
 </header>
-<div class="ornament">— ✦ —</div>
+<div class="ornament">✦</div>
 
 <main>
   <div class="card">
     <h2 class="card-title">Enviar documento para transcrição</h2>
 
+    <div class="aviso-escopo">
+      Este serviço foi otimizado para documentos impressos ou datilografados em português,
+      do século XVIII em diante. Manuscritos e documentos anteriores a esse período podem
+      ser processados, mas sem garantia de qualidade: a avaliação do resultado é de
+      responsabilidade do usuário.
+    </div>
+
     <form id="upload-form">
       <div class="field">
-        <label for="arquivo">Arquivo PDF</label>
+        <label for="codigo"><span class="num">I.</span>Código de convite</label>
+        <input type="text" id="codigo" name="codigo" placeholder="Recebido por e-mail ou WhatsApp"
+               style="text-transform:uppercase;" required>
+      </div>
+
+      <div class="field">
+        <label for="arquivo"><span class="num">II.</span>Arquivo PDF</label>
         <div class="drop-zone" id="drop-zone">
-          <div class="drop-icon">📄</div>
+          <div class="drop-icon">
+            <svg width="38" height="46" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M4 2h22l10 10v34H4z" stroke="#9d8038" stroke-width="1.4" fill="#fbf8f0"/>
+              <path d="M26 2v10h10" stroke="#9d8038" stroke-width="1.4" fill="none"/>
+              <line x1="10" y1="21" x2="30" y2="21" stroke="#c9a84c" stroke-width="1"/>
+              <line x1="10" y1="27" x2="30" y2="27" stroke="#c9a84c" stroke-width="1"/>
+              <line x1="10" y1="33" x2="23" y2="33" stroke="#c9a84c" stroke-width="1"/>
+            </svg>
+          </div>
           <div class="drop-text">Clique para selecionar ou arraste o PDF aqui</div>
           <div class="drop-file-name" id="file-name"></div>
           <input type="file" id="arquivo" name="arquivo" accept=".pdf" required>
@@ -323,20 +456,27 @@
       </div>
 
       <div class="field">
-        <label for="ano">Ano do documento original</label>
+        <label for="ano"><span class="num">III.</span>Ano do documento original</label>
         <input type="number" id="ano" name="ano" min="1400" max="2025"
                placeholder="Ex: 1879, 1942, 1978" required>
-        <p class="field-hint">Use o ano em que o documento foi escrito, não o ano da edição escaneada.</p>
+        <p class="field-hint">Define o perfil de correção ortográfica: até 1910, o texto preserva a grafia histórica; de 1911 em diante, usa regras modernas. Use o ano em que foi escrito, não o da edição escaneada.</p>
       </div>
 
       <div class="field">
-        <label for="tipo">Tipo do documento</label>
+        <label for="tipo"><span class="num">IV.</span>Tipo do documento</label>
         <select id="tipo" name="tipo">
           <option value="livro">Livro ou texto literário</option>
           <option value="juridico">Documento jurídico (processo, acórdão, lei, decreto)</option>
           <option value="periodico">Periódico (jornal, revista)</option>
           <option value="administrativo">Documento administrativo (ofício, relatório, carta)</option>
         </select>
+      </div>
+
+      <div class="field consent">
+        <label>
+          <input type="checkbox" id="lgpd-aceite" name="lgpd_aceite" required>
+          <span>Li e concordo com o tratamento de dados descrito na <a href="/privacidade" target="_blank">política de privacidade</a>.</span>
+        </label>
       </div>
 
       <button type="submit" id="btn-enviar">Transcrever documento</button>
@@ -360,10 +500,17 @@
 </main>
 
 <footer>
-  Universidade de Passo Fundo &nbsp;·&nbsp; <span>Cliora</span> &nbsp;·&nbsp; Transcrição de Documentos Históricos
+  Universidade de Passo Fundo &nbsp;·&nbsp; <span>Cliora</span> &nbsp;·&nbsp; <em title="grafia histórica: s longo (ſ)">Tranſcrição de Documentos Históricos</em>
 </footer>
 
 <script>
+// preenche o codigo de convite automaticamente se vier na URL (?codigo=XXX)
+const paramsUrl = new URLSearchParams(window.location.search);
+const codigoParam = paramsUrl.get('codigo');
+if (codigoParam) {
+  document.getElementById('codigo').value = codigoParam.toUpperCase();
+}
+
 const dropZone  = document.getElementById('drop-zone');
 const fileInput = document.getElementById('arquivo');
 const fileName  = document.getElementById('file-name');

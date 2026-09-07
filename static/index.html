@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cliora — O passado, em texto limpo</title>
+<meta name="description" content="Cliora transcreve documentos históricos em português: OCR especializado com correção contextual por IA, respeitando a grafia da época. Universidade de Passo Fundo.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Trirong:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+  :root {
+    --paper:       #fff8e6;
+    --paper-2:     #f6edd4;
+    --paper-3:     #eee1c0;
+    --maroon:      #3a111a;
+    --maroon-dark: #280b12;
+    --maroon-deep: #1e080e;
+    --crimson:     #a42430;
+    --champagne:   #e2c9a8;
+    --line:        rgba(58,17,26,0.42);
+    --line-soft:   rgba(58,17,26,0.22);
+    --ink-soft:    rgba(58,17,26,0.68);
+    --cream-55:    rgba(255,248,230,0.55);
+    --cream-35:    rgba(255,248,230,0.35);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  ::selection { background: var(--crimson); color: var(--paper); }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 1.05rem;
+    background-color: var(--paper);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.23 0 0 0 0 0.07 0 0 0 0 0.10 0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
+      repeating-linear-gradient(90deg, rgba(58,17,26,0.025) 0 1px, transparent 1px 26px);
+    color: var(--maroon);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible { outline: 1px dashed var(--crimson); outline-offset: 4px; }
+
+  /* ── navegação ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.95rem 4vw;
+    background: linear-gradient(180deg, rgba(30,8,14,0.92), rgba(30,8,14,0.75));
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(255,248,230,0.12);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 0.7rem;
+    text-decoration: none;
+    font-family: 'Trirong', serif; font-weight: 500; font-size: 1.15rem;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--paper);
+  }
+  .brand svg { display: block; }
+  .navlinks { display: flex; gap: 2rem; list-style: none; align-items: center; }
+  .navlinks a {
+    color: var(--cream-55); text-decoration: none;
+    font-family: 'Space Mono', monospace; font-size: 0.62rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    transition: color 0.25s;
+  }
+  .navlinks a .num { color: var(--cream-35); margin-right: 0.4em; }
+  .navlinks a:hover { color: var(--paper); }
+  .cta-nav {
+    display: inline-block; text-decoration: none;
+    border: 1px solid rgba(255,248,230,0.4); color: var(--paper);
+    font-family: 'Space Mono', monospace; font-size: 0.62rem; font-weight: 700;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    padding: 0.55rem 1.1rem 0.5rem 1.3rem;
+    transition: background 0.2s, color 0.2s;
+  }
+  .cta-nav:hover { background: var(--paper); color: var(--maroon); }
+  @media (max-width: 820px) { .navlinks { display: none; } }
+
+  /* ── hero ── */
+  .hero {
+    position: relative; height: 100svh; min-height: 660px;
+    background: var(--maroon-dark);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  #heroCanvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(95% 75% at 50% 52%, transparent 25%, rgba(30,8,14,0.82) 100%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.97 0 0 0 0 0.9 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .hero-inner { position: relative; z-index: 2; text-align: center; padding: 0 6vw; }
+  .eyebrow {
+    font-family: 'Space Mono', monospace; font-size: 0.66rem;
+    letter-spacing: 0.36em; text-transform: uppercase; color: var(--cream-35);
+    margin-bottom: 2rem;
+  }
+  .eyebrow b { color: var(--champagne); font-weight: 400; }
+  h1 {
+    font-family: 'Trirong', serif; font-weight: 500;
+    font-size: clamp(3rem, 8.6vw, 7.2rem);
+    line-height: 0.98; letter-spacing: -0.015em;
+    color: var(--paper);
+  }
+  h1 em { font-style: italic; color: var(--champagne); }
+  .hero-sub {
+    max-width: 47ch; margin: 2.2rem auto 3rem;
+    font-size: clamp(1.05rem, 1.5vw, 1.25rem); line-height: 1.7;
+    color: rgba(255,248,230,0.66);
+  }
+  .hero-sub strong { color: var(--paper); font-weight: 500; }
+  .cta-row { display: flex; gap: 1.4rem; justify-content: center; flex-wrap: wrap; align-items: center; }
+  .cta-primary {
+    display: inline-block; text-decoration: none;
+    background: var(--paper); color: var(--maroon);
+    border: 1px solid var(--paper);
+    font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.72rem;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    padding: 1.05rem 2.2rem 1rem 2.4rem;
+    transition: background 0.2s, color 0.2s;
+  }
+  .cta-primary:hover { background: transparent; color: var(--paper); }
+  .cta-secondary {
+    display: inline-block; text-decoration: none;
+    color: var(--cream-55); padding: 1rem 0.3rem;
+    font-family: 'Space Mono', monospace; font-size: 0.66rem;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    border-bottom: 1px solid rgba(255,248,230,0.25);
+    transition: color 0.25s, border-color 0.25s;
+  }
+  .cta-secondary:hover { color: var(--paper); border-color: var(--champagne); }
+  .scroll-hint {
+    position: absolute; bottom: 1.8rem; left: 50%; transform: translateX(-50%);
+    color: var(--cream-35); font-family: 'Space Mono', monospace;
+    font-size: 0.58rem; letter-spacing: 0.32em; text-transform: uppercase; z-index: 2;
+  }
+  .scroll-hint::after {
+    content: ""; display: block; width: 1px; height: 34px; margin: 0.7rem auto 0;
+    background: linear-gradient(180deg, var(--champagne), transparent);
+    animation: drop 2.2s ease-in-out infinite;
+  }
+  @keyframes drop {
+    0% { transform: scaleY(0); transform-origin: top; }
+    55% { transform: scaleY(1); transform-origin: top; }
+    56% { transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* ── seções ── */
+  section { position: relative; padding: 8.5rem 5vw; }
+  .wrap { max-width: 1060px; margin: 0 auto; }
+  .sec-tag {
+    font-family: 'Space Mono', monospace; font-size: 0.66rem;
+    letter-spacing: 0.3em; text-transform: uppercase; color: var(--crimson);
+    display: block; margin-bottom: 1.2rem;
+  }
+  h2 {
+    font-family: 'Trirong', serif; font-weight: 500;
+    font-size: clamp(2.2rem, 5vw, 3.7rem);
+    line-height: 1.05; letter-spacing: -0.01em;
+  }
+  h2 em { font-style: italic; color: var(--crimson); }
+  .sec-copy {
+    max-width: 56ch; margin-top: 1.5rem;
+    color: var(--ink-soft); line-height: 1.75; font-size: 1.05rem;
+  }
+  .sec-copy strong { color: var(--maroon); font-weight: 600; }
+  .sec-copy + .sec-copy { margin-top: 1rem; }
+
+  /* reveal ao rolar */
+  .rv { opacity: 0; transform: translateY(18px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .rv.on { opacity: 1; transform: none; }
+</style>
+<style>
+  /* ── I · o problema: duas placas ── */
+  .placas { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 3.5rem; }
+  .placa {
+    position: relative; border: 1px solid var(--maroon); background: var(--paper-2);
+    padding: 2rem 1.9rem 1.8rem;
+  }
+  .placa::before {
+    content: ""; position: absolute; inset: 5px;
+    border: 1px solid var(--line-soft); pointer-events: none;
+  }
+  .placa .p-tag {
+    font-family: 'Space Mono', monospace; font-size: 0.6rem; font-weight: 700;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    display: block; margin-bottom: 1.1rem;
+  }
+  .placa.ruim .p-tag { color: var(--crimson); }
+  .placa.boa { background: #fffdf3; }
+  .placa.boa .p-tag { color: var(--maroon); }
+  .placa .amostra-txt { font-size: 1.02rem; line-height: 1.8; }
+  .placa.ruim .amostra-txt { color: rgba(58,17,26,0.75); }
+  .placa .err {
+    text-decoration: underline wavy var(--crimson);
+    text-decoration-thickness: 1px; text-underline-offset: 3px;
+  }
+  .placa .ok-mark { color: var(--crimson); font-weight: 600; }
+  .placa figcaption {
+    margin-top: 1.2rem; padding-top: 0.9rem; border-top: 1px solid var(--line-soft);
+    font-size: 0.86rem; font-style: italic; color: var(--ink-soft); line-height: 1.55;
+  }
+  @media (max-width: 820px) { .placas { grid-template-columns: 1fr; } }
+
+  /* ── II · demonstração: comparador arrastável ── */
+  .comparador {
+    position: relative; height: 600px; margin-top: 3.5rem;
+    border: 1px solid var(--maroon); overflow: hidden;
+    cursor: ew-resize; user-select: none; touch-action: pan-y;
+    box-shadow: 0 24px 55px -22px rgba(40,11,18,0.45);
+    --x: 50%;
+  }
+  .camada { position: absolute; inset: 0; overflow: hidden; }
+  .camada.limpa { clip-path: inset(0 0 0 var(--x)); z-index: 2; background: #fffdf3; }
+  .camada.original { background: #e9dbb8; z-index: 1; }
+
+  .comp-label {
+    position: absolute; top: 1rem; z-index: 4;
+    font-family: 'Space Mono', monospace; font-size: 0.58rem; font-weight: 700;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    padding: 0.4rem 0.7rem 0.35rem 0.85rem;
+    pointer-events: none;
+  }
+  .comp-label.esq { left: 1rem; background: var(--maroon); color: var(--paper); }
+  .comp-label.dir { right: 1rem; background: var(--paper); color: var(--maroon); border: 1px solid var(--maroon); }
+
+  .divisor {
+    position: absolute; top: 0; bottom: 0; left: var(--x);
+    width: 2px; margin-left: -1px; background: var(--maroon); z-index: 3;
+    pointer-events: none;
+  }
+  .divisor::after {
+    content: "❦";
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 46px; height: 46px;
+    background: var(--paper); border: 1px solid var(--maroon);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; color: var(--crimson);
+    box-shadow: 0 6px 18px rgba(40,11,18,0.3);
+  }
+
+  /* página escaneada, simulada em código */
+  .pagina-scan {
+    position: absolute; inset: 0; padding: 4.5rem 8% 3rem;
+    background:
+      radial-gradient(18% 12% at 82% 78%, rgba(120,84,30,0.14), transparent 70%),
+      radial-gradient(12% 9% at 15% 20%, rgba(120,84,30,0.12), transparent 70%),
+      radial-gradient(25% 18% at 60% 40%, rgba(90,60,20,0.07), transparent 70%),
+      #e9dbb8;
+  }
+  .pagina-scan .miolo {
+    transform: rotate(-0.7deg);
+    filter: blur(0.35px) contrast(0.92);
+    color: #43301a; opacity: 0.88;
+  }
+  .pagina-scan h4 {
+    font-family: 'EB Garamond', serif; font-weight: 600; text-align: center;
+    font-size: 1.15rem; letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+  .pagina-scan .sub { text-align: center; font-size: 0.92rem; margin-bottom: 1.4rem; }
+  .pagina-scan p { font-size: 0.98rem; line-height: 1.75; text-align: justify; margin-bottom: 0.7rem; }
+  .pagina-scan .long-s { letter-spacing: 0.01em; }
+
+  /* página transcrita */
+  .pagina-limpa {
+    position: absolute; inset: 0; padding: 4.5rem 8% 3rem;
+    background: #fffdf3;
+  }
+  .pagina-limpa::before {
+    content: ""; position: absolute; inset: 10px;
+    border: 1px solid var(--line-soft); pointer-events: none;
+  }
+  .pagina-limpa h4 {
+    font-family: 'Trirong', serif; font-weight: 500; text-align: center;
+    font-size: 1.2rem; letter-spacing: 0.06em;
+    margin-bottom: 0.4rem; color: var(--maroon);
+  }
+  .pagina-limpa .sub { text-align: center; font-size: 0.95rem; margin-bottom: 1.4rem; color: var(--ink-soft); font-style: italic; }
+  .pagina-limpa p { font-size: 1rem; line-height: 1.8; text-align: justify; margin-bottom: 0.7rem; }
+  .pagina-limpa p:first-of-type::first-letter {
+    font-family: 'Trirong', serif; font-size: 2.6rem; line-height: 1;
+    padding-right: 0.4rem; color: var(--crimson);
+  }
+  .comp-hint {
+    text-align: center; margin-top: 1.1rem;
+    font-family: 'Space Mono', monospace; font-size: 0.6rem;
+    letter-spacing: 0.26em; text-transform: uppercase; color: var(--ink-soft);
+  }
+
+  /* ── III · 1911: o slider de ano ── */
+  .ano-widget {
+    position: relative; margin-top: 3.5rem;
+    border: 1px solid var(--maroon); background: var(--paper-2);
+    padding: 2.8rem 2.6rem 2.4rem;
+  }
+  .ano-widget::before {
+    content: ""; position: absolute; inset: 6px;
+    border: 1px solid var(--line-soft); pointer-events: none;
+  }
+  .ano-top { display: flex; align-items: baseline; justify-content: center; gap: 1.6rem; flex-wrap: wrap; }
+  .ano-display {
+    font-family: 'Trirong', serif; font-weight: 500;
+    font-size: clamp(3.4rem, 8vw, 5.6rem); line-height: 1;
+    color: var(--maroon); font-variant-numeric: tabular-nums;
+  }
+  .ano-badge {
+    font-family: 'Space Mono', monospace; font-size: 0.62rem; font-weight: 700;
+    letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--crimson);
+  }
+  .ano-track { position: relative; margin: 2.4rem 0 2.2rem; }
+  .ano-track input[type="range"] {
+    width: 100%; appearance: none; -webkit-appearance: none;
+    height: 2px; background: var(--maroon); outline-offset: 6px;
+  }
+  .ano-track input[type="range"]::-webkit-slider-thumb {
+    appearance: none; -webkit-appearance: none;
+    width: 20px; height: 20px; background: var(--paper);
+    border: 2px solid var(--maroon); transform: rotate(45deg);
+    cursor: grab; transition: background 0.15s;
+  }
+  .ano-track input[type="range"]::-webkit-slider-thumb:hover { background: var(--champagne); }
+  .ano-track input[type="range"]::-moz-range-thumb {
+    width: 16px; height: 16px; background: var(--paper);
+    border: 2px solid var(--maroon); border-radius: 0;
+    transform: rotate(45deg); cursor: grab;
+  }
+  .marco-1911 {
+    position: absolute; top: -6px; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+    pointer-events: none;
+  }
+  .marco-1911::after { content: ""; width: 1px; height: 14px; background: var(--crimson); }
+  .marco-1911 span {
+    font-family: 'Space Mono', monospace; font-size: 0.55rem;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--crimson);
+    white-space: nowrap;
+  }
+  .amostra-orto { text-align: center; min-height: 5.5rem; transition: opacity 0.25s; }
+  .amostra-orto p {
+    font-size: 1.25rem; line-height: 1.7; max-width: 44ch; margin: 0 auto;
+  }
+  .amostra-orto .nota-orto {
+    display: block; margin-top: 0.9rem;
+    font-size: 0.84rem; font-style: italic; color: var(--ink-soft);
+  }
+
+  /* ── IV · privacidade ── */
+  .celulas {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;
+    margin-top: 3.5rem; border-top: 1px solid var(--line);
+  }
+  .celula { padding: 2.4rem 2rem 0; border-left: 1px solid var(--line); }
+  .celula:first-child { border-left: none; padding-left: 0; }
+  .celula svg { width: 32px; height: 32px; stroke: var(--crimson); fill: none; stroke-width: 1.4; margin-bottom: 1.2rem; }
+  .celula h4 {
+    font-family: 'Space Mono', monospace; font-size: 0.74rem; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.7rem;
+  }
+  .celula p { color: var(--ink-soft); font-size: 0.95rem; line-height: 1.65; }
+  .celula a { color: var(--maroon); border-bottom: 1px solid var(--crimson); text-decoration: none; font-weight: 600; }
+  .celula a:hover { color: var(--crimson); }
+  @media (max-width: 820px) {
+    .celulas { grid-template-columns: 1fr; }
+    .celula { border-left: none; padding-left: 0; }
+  }
+
+  /* ── manifesto ── */
+  .manifesto {
+    background: var(--maroon-dark);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.97 0 0 0 0 0.9 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+    text-align: center; padding: 10rem 5vw;
+  }
+  .manifesto .m-fl { color: var(--crimson); font-size: 1rem; display: block; margin-bottom: 2.2rem; }
+  .manifesto p {
+    font-family: 'Trirong', serif; font-weight: 400;
+    font-size: clamp(1.6rem, 3.4vw, 2.5rem); line-height: 1.45;
+    color: var(--paper); max-width: 30ch; margin: 0 auto;
+  }
+  .manifesto p em { font-style: italic; color: var(--champagne); }
+  .manifesto .assin {
+    margin-top: 2.6rem; font-family: 'Space Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--cream-35);
+  }
+
+  /* ── cta final ── */
+  .final { text-align: center; padding: 9rem 5vw 8rem; }
+  .final h2 { margin-bottom: 1.2rem; }
+  .final .sec-copy { margin-left: auto; margin-right: auto; }
+  .final .cta-primary {
+    background: var(--maroon); color: var(--paper); border-color: var(--maroon);
+    margin-top: 1.8rem;
+  }
+  .final .cta-primary:hover { background: var(--paper); color: var(--maroon); }
+  .final .micro {
+    margin-top: 1.8rem; color: var(--ink-soft);
+    font-family: 'Space Mono', monospace; font-size: 0.6rem;
+    letter-spacing: 0.26em; text-transform: uppercase;
+  }
+
+  /* ── rodapé ── */
+  footer {
+    padding: 2.4rem 4vw;
+    display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+    background: var(--maroon-deep);
+    border-top: 1px solid rgba(255,248,230,0.12);
+  }
+  footer .f-brand {
+    font-family: 'Trirong', serif; font-weight: 500; font-size: 1rem;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--paper);
+  }
+  footer p { color: rgba(255,248,230,0.45); font-size: 0.82rem; line-height: 1.65; font-style: italic; }
+  footer a { color: var(--cream-55); text-decoration: none; border-bottom: 1px solid rgba(255,248,230,0.25); }
+  footer a:hover { color: var(--paper); border-color: var(--champagne); }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .scroll-hint::after { animation: none; }
+    .rv { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+<script>
+/* shim de pré-visualização (ver index.html) */
+var CLIORA_PREVIEW = false;
+function clioraMarkPreview() {
+  CLIORA_PREVIEW = true;
+  document.querySelectorAll('a[href^="/"]').forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (h === '/privacidade') a.setAttribute('href', 'privacidade.html');
+    else if (h === '/comece') a.setAttribute('href', 'comece.html');
+    else if (h === '/') a.setAttribute('href', 'index.html');
+    else if (h.indexOf('/?') === 0) a.setAttribute('href', 'index.html' + h.slice(1));
+  });
+}
+</script>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="#" aria-label="Cliora">
+    <svg width="26" height="26" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="24" cy="24" r="21.5" fill="none" stroke="#fff8e6" stroke-width="1.6" opacity="0.9"/>
+      <circle cx="24" cy="24" r="17" fill="none" stroke="#fff8e6" stroke-width="1" opacity="0.55"/>
+      <text x="24" y="31" text-anchor="middle" font-family="Trirong, serif" font-size="22" fill="#fff8e6">C</text>
+    </svg>
+    Cliora
+  </a>
+  <ul class="navlinks">
+    <li><a href="#problema"><span class="num">I</span>O problema</a></li>
+    <li><a href="#demo"><span class="num">II</span>Demonstração</a></li>
+    <li><a href="#ortografia"><span class="num">III</span>O corte de 1911</a></li>
+    <li><a href="#privacidade"><span class="num">IV</span>Privacidade</a></li>
+  </ul>
+  <a class="cta-nav" href="/comece">Tenho um código</a>
+</nav>
+
+<img src="/static/logo.png" alt="" style="display:none">
+<header class="hero">
+  <canvas id="heroCanvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="eyebrow">Universidade de Passo Fundo <b>·</b> Beta fechado</p>
+    <h1>O passado,<br>em <em>texto limpo</em>.</h1>
+    <p class="hero-sub">
+      O Cliora transcreve documentos históricos em português — impressos ou datilografados,
+      do século XVIII em diante — combinando <strong>OCR especializado</strong> com
+      <strong>correção contextual por IA</strong>, respeitando a grafia da época.
+    </p>
+    <div class="cta-row">
+      <a class="cta-primary" href="/comece">Tenho um código de convite</a>
+      <a class="cta-secondary" href="#problema">Por que ele existe</a>
+    </div>
+  </div>
+  <div class="scroll-hint">Folheie</div>
+</header>
+
+<section id="problema">
+  <div class="wrap">
+    <span class="sec-tag rv">I · O problema</span>
+    <h2 class="rv">OCR comum lê letras.<br>Não lê <em>documentos</em>.</h2>
+    <p class="sec-copy rv">
+      Jogue um processo de 1890 num conversor genérico e ele devolve um texto tecnicamente
+      "reconhecido" — e praticamente inútil. O <strong>s longo (ſ) vira f</strong>, o rn vira m,
+      cabeçalhos correntes se misturam ao corpo e a grafia da época é "corrigida" para o
+      português de hoje, apagando a evidência histórica que você queria preservar.
+    </p>
+
+    <div class="placas rv">
+      <figure class="placa ruim">
+        <span class="p-tag">✗ OCR genérico</span>
+        <p class="amostra-txt">
+          Acta da <span class="err">feſſão</span> ordinaria de 14 de <span class="err">rnarço</span> de
+          1879. A <span class="err">Camara</span> Municipal da <span class="err">Vilía</span>
+          <span class="err">reſolveu</span> mandar vir os <span class="err">materiaes</span> para a
+          <span class="err">conſtrucção</span> da ponte <span class="err">ſobre</span> o rio,
+          <span class="err">fendo</span> o orçamento de <span class="err">4:000$000</span> réis.
+        </p>
+        <figcaption>S longo virou f, "março" virou "rnarço", acentos sumiram — e cada erro desses se repete por centenas de páginas.</figcaption>
+      </figure>
+      <figure class="placa boa">
+        <span class="p-tag"><span class="ok-mark">✓</span> Transcrição Cliora</span>
+        <p class="amostra-txt">
+          Acta da sessão ordinaria de 14 de março de 1879. A Camara Municipal da Villa
+          resolveu mandar vir os materiaes para a construcção da ponte sobre o rio,
+          sendo o orçamento de 4:000$000 réis.
+        </p>
+        <figcaption>Mesmo documento, grafia de 1879 preservada (materiaes, construcção, Villa) — apenas os erros de leitura foram resolvidos.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="demo" style="padding-top:2rem">
+  <div class="wrap">
+    <span class="sec-tag rv">II · Demonstração</span>
+    <h2 class="rv">Arraste e veja a <em>transcrição</em></h2>
+    <p class="sec-copy rv">
+      Isto é uma simulação fiel do que acontece com o seu PDF: à esquerda, a página como
+      o scanner a vê; à direita, o texto que você baixa. <strong>Arraste o florão</strong> —
+      ou toque e deslize — para comparar.
+    </p>
+
+    <div class="comparador rv" id="comparador" role="slider" aria-label="Comparação entre página escaneada e transcrição" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0">
+      <div class="camada original">
+        <div class="pagina-scan">
+          <div class="miolo">
+            <h4>Acta da Seſſão Ordinaria</h4>
+            <p class="sub">Camara Municipal · 14 de março de 1879</p>
+            <p class="long-s">A Camara Municipal da Villa, reunida em ſeſſão ordinaria do dia quatorze do corrente mez, ſob a preſidencia do Illuſtrisſimo Senhor Vereador Presidente, reſolveu, depois de lida e approvada a acta da ſeſſão antecedente, mandar vir os materiaes neceſſarios para a conſtrucção da ponte ſobre o rio.</p>
+            <p class="long-s">Foiy deliberado que o Theſoureiro faça o pagamento da quantia de quatro contos de réis (4:000$000) ao empreiteiro, em duas parcellas meensaes, ficando a obra ſob a fiſcalisação da commiſſão nomeada para eſte fim.</p>
+            <p class="long-s">E por conſtar da preſente, foi por todos aſſignada, de que eu, eſcrevente, a lavrei. — Villa, 14 de março de 1879.</p>
+          </div>
+        </div>
+      </div>
+      <div class="camada limpa">
+        <div class="pagina-limpa">
+          <h4>Acta da Sessão Ordinaria</h4>
+          <p class="sub">Camara Municipal · 14 de março de 1879</p>
+          <p>A Camara Municipal da Villa, reunida em sessão ordinaria do dia quatorze do corrente mez, sob a presidencia do Illustrissimo Senhor Vereador Presidente, resolveu, depois de lida e approvada a acta da sessão antecedente, mandar vir os materiaes necessarios para a construcção da ponte sobre o rio.</p>
+          <p>Foy deliberado que o Thesoureiro faça o pagamento da quantia de quatro contos de réis (4:000$000) ao empreiteiro, em duas parcellas mensaes, ficando a obra sob a fiscalisação da commissão nomeada para este fim.</p>
+          <p>E por constar da presente, foi por todos assignada, de que eu, escrevente, a lavrei. — Villa, 14 de março de 1879.</p>
+        </div>
+      </div>
+      <div class="divisor"></div>
+      <span class="comp-label esq">Original · 1879</span>
+      <span class="comp-label dir">Transcrição Cliora</span>
+    </div>
+    <p class="comp-hint rv">Arraste o florão para comparar · a grafia de época é preservada</p>
+  </div>
+</section>
+
+<section id="ortografia" style="padding-top:2rem">
+  <div class="wrap">
+    <span class="sec-tag rv">III · O corte de 1911</span>
+    <h2 class="rv">Um ano muda <em>toda a grafia</em></h2>
+    <p class="sec-copy rv">
+      A reforma ortográfica de 1911 (seguindo a de Portugal) reescreveu o português:
+      <em>idéa</em> virou <em>ideia</em>, <em>construcção</em> virou <em>construção</em>.
+      Por isso o Cliora pergunta o ano do seu documento — <strong>não é burocracia, é o que
+      decide a grafia da transcrição</strong>. Mova o ano e veja:
+    </p>
+
+    <div class="ano-widget rv">
+      <div class="ano-top">
+        <span class="ano-display" id="anoDisplay">1890</span>
+        <span class="ano-badge" id="anoBadge">Grafia histórica</span>
+      </div>
+      <div class="ano-track">
+        <input type="range" id="anoSlider" min="1780" max="2020" value="1890" step="1"
+               aria-label="Ano do documento">
+        <div class="marco-1911" id="marco1911"><span>1911 · reforma</span></div>
+      </div>
+      <div class="amostra-orto" id="amostraOrto">
+        <p id="amostraTxt">«A camara approvou a construcção da ponte, destinando quatro contos de réis á obra, com a idéa de ligar os dois bairros da villa.»</p>
+        <span class="nota-orto" id="amostraNota">Até 1910: a transcrição preserva a grafia histórica, palavra por palavra.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="privacidade" style="padding-top:2rem">
+  <div class="wrap">
+    <span class="sec-tag rv">IV · Privacidade</span>
+    <h2 class="rv">Feito para <em>pesquisa</em>, com responsabilidade</h2>
+    <p class="sec-copy rv">
+      O Cliora nasceu na Universidade de Passo Fundo para uso acadêmico. Durante o beta
+      fechado, as regras são claras — e escritas em português, não em juridiquês.
+    </p>
+    <div class="celulas">
+      <div class="celula rv">
+        <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="1"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 14v3"/></svg>
+        <h4>LGPD sem letra miúda</h4>
+        <p>Você sabe exatamente o que é coletado e como é usado, e pode pedir a exclusão dos seus documentos a qualquer momento, por e-mail. <a href="/privacidade">Ler o aviso completo</a>.</p>
+      </div>
+      <div class="celula rv">
+        <svg viewBox="0 0 24 24"><path d="M14 3H7a1.5 1.5 0 0 0-1.5 1.5v15A1.5 1.5 0 0 0 7 21h10a1.5 1.5 0 0 0 1.5-1.5v-11z"/><path d="M14 3v4.5h4.5"/><path d="M9 12h6M9 16h4"/></svg>
+        <h4>Beta sob controle</h4>
+        <p>Acesso por código de convite, até 10 páginas por documento e 10 por dia. Limites pequenos, de propósito: o objetivo agora é aprender com uso real.</p>
+      </div>
+      <div class="celula rv">
+        <svg viewBox="0 0 24 24"><path d="M3 10l9-5 9 5"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8"/><path d="M3 20h18"/></svg>
+        <h4>Projeto universitário</h4>
+        <p>Desenvolvido por <a href="mailto:felipeabal@upf.br">Felipe Abal</a> na Universidade de Passo Fundo. Erros e resultados estranhos viram melhoria do sistema — escreva, o feedback é o produto.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="manifesto rv">
+  <span class="m-fl">❦</span>
+  <p>A máquina lê os caracteres.<br>O contexto lê o <em>documento</em>.<br>O historiador lê o <em>passado</em>.</p>
+  <p class="assin">Cliora · Transcrição de Documentos Históricos</p>
+</div>
+
+<section class="final rv">
+  <span class="sec-tag">Pronto para transcrever?</span>
+  <h2>Traga o seu <em>documento</em></h2>
+  <p class="sec-copy">
+    O beta é fechado e gratuito para convidados. Use o código recebido por e-mail ou
+    WhatsApp, envie um PDF de até 10 páginas e baixe a transcrição em poucos minutos.
+  </p>
+  <a class="cta-primary" href="/comece">Acessar com código de convite</a>
+  <p class="micro">Beta fechado · Universidade de Passo Fundo</p>
+</section>
+
+<footer>
+  <div>
+    <p class="f-brand">Cliora</p>
+    <p>Transcrição de documentos históricos em português, do século XVIII em diante.<br>Um projeto de <a href="mailto:felipeabal@upf.br">Felipe Abal</a> · Universidade de Passo Fundo.</p>
+  </div>
+  <div style="text-align:right">
+    <p>I O problema · II Demonstração · III O corte de 1911 · IV Privacidade</p>
+    <p style="margin-top:0.6rem"><a href="/comece">Começar →</a></p>
+  </div>
+</footer>
+<script>
+/* ═══ hero: texto histórico que falha e se corrige (as confusões reais do OCR) ═══ */
+(function () {
+  const canvas = document.getElementById('heroCanvas');
+  const ctx = canvas.getContext('2d');
+  const off = document.createElement('canvas');
+  const offCtx = off.getContext('2d');
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const CONFUSOES = {
+    s: 'f', f: 's', m: 'rn', h: 'b', b: 'h',
+    c: 'e', e: 'c', a: 'o', o: 'a', u: 'n', i: 'l', l: 'i', t: 'f', n: 'u'
+  };
+  const TEXTO = 'Acta da sessão ordinaria · Villa, 14 de março de 1879 · A Camara Municipal resolveu mandar vir os materiaes para a construcção da ponte sobre o rio · quatro contos de réis · ';
+
+  let cells = [];
+  let glitches = [];
+  let dpr = 1, charW = 0, lineH = 0;
+  let raf = null, lastSpawn = 0;
+
+  function montar() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    canvas.width = off.width = Math.round(w * dpr);
+    canvas.height = off.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const font = '17px "EB Garamond", Georgia, serif';
+    offCtx.font = font;
+    offCtx.textBaseline = 'top';
+    charW = offCtx.measureText('m').width * 0.62;
+    lineH = 30;
+
+    const cols = Math.ceil(w / charW);
+    const rows = Math.ceil(h / lineH);
+    const fonte = (TEXTO + TEXTO + TEXTO).split('');
+    let idx = 0;
+    cells = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const ch = fonte[idx % fonte.length]; idx++;
+        cells.push({
+          x: c * charW, y: r * lineH, ch: ch,
+          ink: 0.14 + Math.random() * 0.2
+        });
+      }
+    }
+
+    // camada estática: o "papel escuro" com o texto histórico
+    offCtx.fillStyle = '#280b12';
+    offCtx.fillRect(0, 0, w, h);
+    offCtx.font = font;
+    for (const cell of cells) {
+      offCtx.fillStyle = `rgba(255,248,230,${cell.ink})`;
+      offCtx.fillText(cell.ch, cell.x, cell.y);
+    }
+    glitches = [];
+    ctx.drawImage(off, 0, 0, canvas.clientWidth, canvas.clientHeight);
+  }
+
+  function confundivel(cell) {
+    const b = cell.ch.toLowerCase();
+    return cell.ch !== ' ' && CONFUSOES[b];
+  }
+
+  function spawnGlitch(now) {
+    const candidatos = [];
+    for (let i = 0; i < 40; i++) {
+      const cell = cells[Math.floor(Math.random() * cells.length)];
+      if (confundivel(cell)) { candidatos.push(cell); break; }
+    }
+    for (const cell of candidatos) {
+      const b = cell.ch.toLowerCase();
+      let falso = CONFUSOES[b];
+      if (cell.ch === cell.ch.toUpperCase() && cell.ch.toLowerCase() !== cell.ch) {
+        falso = falso.toUpperCase();
+      }
+      glitches.push({ cell, falso, ate: now + 350 + Math.random() * 800, x: cell.x, y: cell.y, w: charW * (falso.length), h: lineH });
+    }
+  }
+
+  function frame(now) {
+    ctx.drawImage(off, 0, 0, canvas.clientWidth, canvas.clientHeight);
+
+    if (now - lastSpawn > 120 && glitches.length < 26) {
+      lastSpawn = now;
+      spawnGlitch(now);
+    }
+
+    ctx.font = '17px "EB Garamond", Georgia, serif';
+    ctx.textBaseline = 'top';
+    glitches = glitches.filter(g => {
+      if (now > g.ate) return false; // resolveu: o texto original volta no próximo frame
+      // apaga o caractere correto e desenha o equivocado
+      ctx.fillStyle = '#280b12';
+      ctx.fillRect(g.x - 1, g.y, g.w + 2, g.h);
+      const tremor = Math.random() < 0.25 ? (Math.random() - 0.5) * 1.4 : 0;
+      ctx.fillStyle = Math.random() < 0.22 ? 'rgba(226,201,168,0.95)' : 'rgba(212,138,138,0.9)';
+      ctx.fillText(g.falso, g.x + tremor, g.y);
+      return true;
+    });
+
+    raf = requestAnimationFrame(frame);
+  }
+
+  montar();
+  if (!REDUCED) {
+    raf = requestAnimationFrame(frame);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { cancelAnimationFrame(raf); raf = null; }
+      else if (!raf) raf = requestAnimationFrame(frame);
+    });
+  }
+
+  let rs;
+  window.addEventListener('resize', () => {
+    clearTimeout(rs);
+    rs = setTimeout(montar, 180);
+  });
+})();
+
+/* ═══ comparador antes/depois ═══ */
+(function () {
+  const comp = document.getElementById('comparador');
+  if (!comp) return;
+  let arrastando = false;
+
+  function setX(clientX) {
+    const r = comp.getBoundingClientRect();
+    let p = ((clientX - r.left) / r.width) * 100;
+    p = Math.max(4, Math.min(96, p));
+    comp.style.setProperty('--x', p + '%');
+    comp.setAttribute('aria-valuenow', Math.round(p));
+  }
+
+  comp.addEventListener('pointerdown', e => {
+    arrastando = true;
+    comp.setPointerCapture(e.pointerId);
+    setX(e.clientX);
+  });
+  comp.addEventListener('pointermove', e => { if (arrastando) setX(e.clientX); });
+  comp.addEventListener('pointerup', () => { arrastando = false; });
+  comp.addEventListener('pointercancel', () => { arrastando = false; });
+
+  comp.addEventListener('keydown', e => {
+    const atual = parseFloat(comp.getAttribute('aria-valuenow'));
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      e.preventDefault();
+      const prox = Math.max(4, Math.min(96, atual + (e.key === 'ArrowRight' ? 4 : -4)));
+      comp.style.setProperty('--x', prox + '%');
+      comp.setAttribute('aria-valuenow', prox);
+    }
+  });
+})();
+
+/* ═══ o corte de 1911 ═══ */
+(function () {
+  const slider = document.getElementById('anoSlider');
+  if (!slider) return;
+  const display = document.getElementById('anoDisplay');
+  const badge = document.getElementById('anoBadge');
+  const txt = document.getElementById('amostraTxt');
+  const nota = document.getElementById('amostraNota');
+  const marco = document.getElementById('marco1911');
+  const caixa = document.getElementById('amostraOrto');
+
+  const ANTES = {
+    t: '«A camara approvou a construcção da ponte, destinando quatro contos de réis á obra, com a idéa de ligar os dois bairros da villa.»',
+    n: 'Até 1910: a transcrição preserva a grafia histórica, palavra por palavra.'
+  };
+  const DEPOIS = {
+    t: '«A câmara aprovou a construção da ponte, destinando quatro contos de réis à obra, com a ideia de ligar os dois bairros da vila.»',
+    n: 'De 1911 em diante: a transcrição segue a ortografia moderna.'
+  };
+
+  function posMarco() {
+    const min = +slider.min, max = +slider.max;
+    marco.style.left = ((1911 - min) / (max - min) * 100) + '%';
+  }
+
+  function atualizar() {
+    const ano = +slider.value;
+    const historico = ano < 1911;
+    display.textContent = ano;
+    badge.textContent = historico ? 'Grafia histórica' : 'Grafia moderna';
+    const d = historico ? ANTES : DEPOIS;
+    if (txt.dataset.perfil !== String(historico)) {
+      txt.dataset.perfil = String(historico);
+      caixa.style.opacity = 0;
+      setTimeout(() => {
+        txt.textContent = d.t;
+        nota.textContent = d.n;
+        caixa.style.opacity = 1;
+      }, 220);
+    }
+  }
+
+  posMarco();
+  atualizar();
+  slider.addEventListener('input', atualizar);
+  window.addEventListener('resize', posMarco);
+})();
+
+/* ═══ reveal ao rolar (uma vez, sutil) ═══ */
+(function () {
+  const els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(el => el.classList.add('on'));
+    return;
+  }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        en.target.classList.add('on');
+        io.unobserve(en.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  els.forEach(el => io.observe(el));
+})();
+
+/* nav CTA em pré-visualização */
+if (CLIORA_PREVIEW) clioraMarkPreview();
+</script>
+</body>
+</html>

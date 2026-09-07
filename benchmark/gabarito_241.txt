@@ -1,0 +1,18 @@
+<noinclude><pagequality level="4" user="Ceciliawolf" />{{rh|1={{#ifeq:{{#expr:{{SUBPAGENAME}} mod 2}}|0|{{#expr:{{SUBPAGENAME}} - 10}}}}|2={{smaller|OS MAIAS}}|3={{#ifeq:{{#expr:{{SUBPAGENAME}} mod 2}}|1|{{#expr:{{SUBPAGENAME}} - 10}}}}}}
+{{hr}}</noinclude>pelos pés como um enxurro de cloaca... O que faço é arregaçar as calças! Arregaço as calças... Mais nada, meu Ega. Arregaço as calças!
+
+E arregaçou-as realmente, mostrando a ceroula, n’um gesto brusco e de delirio.
+
+— ­Pois quando encontrares enchurros d’esses, gritou-lhe o Ega, agacha-te e bebe-os! Dão-te sangue e força ao lyrismo!
+
+Mas Alencar, sem o ouvir, berrava para os outros, esmurrando o ar: 
+
+— ­Eu, se esse Craveirete não fosse um rachitico, talvez me entretivesse a rolal-o aos pontapés por esse Chiado abaixo, a elle e á versalhada, a essa lambisgonhice excrementicia com que seringou Satanaz! E depois de o besuntar bem de lama, esborrachava-lhe o craneo!
+
+— ­Não se esborracham assim craneos, disse de lá o Ega n’um tom frio de troça.
+
+Alencar voltou para elle uma face medonha. A colera e o cognac incendiavam-lhe o olhar; todo elle tremia: 
+
+— ­Esborrachava-lh’o, sim, esborrachava, João da Ega! Esborrachava-lh’o assim, olha, assim mesmo! — ­Rompeu a atirar patadas ao soalho, abalando a sala, fazendo tilintar crystaes e louças. — ­Mas não quero, rapazes! Dentro d’aquelle craneo só ha excremento, vomito, puz, materia verde, e se lh’o esborrachasse, por que lh’o esborrachava, rapazes, todo o miollo podre sahia, empestava a cidade, tinhamos o cholera! Irra! Tinhamos a peste!
+{{nop}}<noinclude>
+<references/></noinclude>

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cliora — Transcrição de Documentos Históricos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Trirong:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+  :root {
+    --paper:       #fff8e6;
+    --paper-2:     #f6edd4;
+    --paper-3:     #eee1c0;
+    --maroon:      #3a111a;
+    --maroon-dark: #280b12;
+    --maroon-mid:  #5a2230;
+    --crimson:     #a42430;
+    --line:        rgba(58,17,26,0.42);
+    --line-soft:   rgba(58,17,26,0.22);
+    --ink-soft:    rgba(58,17,26,0.68);
+    --ok:          #3d5a40;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  ::selection { background: var(--crimson); color: var(--paper); }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 1.02rem;
+    background-color: var(--paper);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.23 0 0 0 0 0.07 0 0 0 0 0.10 0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
+      repeating-linear-gradient(90deg, rgba(58,17,26,0.025) 0 1px, transparent 1px 26px);
+    color: var(--maroon);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── cabeçalho ── */
+  header {
+    background: var(--maroon-dark);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.15rem;
+    border-bottom: 1px solid rgba(255,248,230,0.16);
+  }
+
+  header img { height: 50px; width: auto; display: block; }
+  .seal { display: none; }
+
+  .header-divider { width: 1px; height: 40px; background: rgba(255,248,230,0.25); }
+
+  .header-text h1 {
+    font-family: 'Trirong', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--paper);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+
+  .header-text span {
+    display: block;
+    margin-top: 0.35rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: rgba(255,248,230,0.55);
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+  }
+
+  /* ── filete com florão ── */
+  .regra {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 0.42rem 18%;
+    background: var(--maroon);
+    color: rgba(255,248,230,0.75);
+    font-size: 0.72rem;
+  }
+  .regra::before, .regra::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,248,230,0.4), transparent);
+  }
+
+  /* ── conteúdo ── */
+  main {
+    flex: 1;
+    max-width: 680px;
+    width: 100%;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+  }
+
+  /* ── fólio ── */
+  .card {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--maroon);
+    border-radius: 0;
+    padding: 2.9rem 2.6rem 2.5rem;
+    box-shadow:
+      0 1px 0 rgba(255,248,230,0.7) inset,
+      0 18px 38px -16px rgba(40,11,18,0.4);
+    animation: rise 0.55s ease both;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid var(--line);
+    pointer-events: none;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card { animation: none; }
+  }
+
+  /* etiqueta de fólio, invertida, sobre a borda superior */
+  .etiqueta {
+    position: absolute;
+    top: -0.62rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--maroon);
+    color: var(--paper);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 0.34rem 0.8rem 0.3rem 1.1rem;
+    white-space: nowrap;
+    z-index: 1;
+  }
+
+  .card-title {
+    font-family: 'Trirong', serif;
+    font-size: 1.45rem;
+    font-weight: 500;
+    color: var(--maroon);
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+  .card-title::after {
+    content: "";
+    display: block;
+    width: 88px;
+    height: 3px;
+    margin: 0.9rem auto 0;
+    border-top: 2px solid var(--maroon);
+    border-bottom: 1px solid var(--maroon);
+  }
+
+  /* ── aviso de escopo ── */
+  .aviso-escopo {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    line-height: 1.65;
+    padding: 1rem 0.25rem 1.2rem;
+    margin-bottom: 1.7rem;
+    border-bottom: 1px solid var(--line-soft);
+    text-align: center;
+  }
+  .aviso-escopo::before {
+    content: "❦";
+    display: block;
+    font-style: normal;
+    color: var(--crimson);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── formulário ── */
+  .field { margin-bottom: 1.45rem; }
+
+  label {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--maroon);
+    margin-bottom: 0.5rem;
+  }
+  label .num {
+    font-weight: 400;
+    color: var(--crimson);
+    letter-spacing: 0.05em;
+    margin-right: 0.45rem;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 0.68rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    background: var(--paper-2);
+    color: var(--maroon);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 1rem;
+    appearance: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%233a111a' stroke-width='1.4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    padding-right: 2.4rem;
+  }
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  select:focus {
+    outline: 1px dashed rgba(58,17,26,0.6);
+    outline-offset: 3px;
+    border-color: var(--maroon);
+    background: #fffdf3;
+  }
+  ::placeholder { color: rgba(58,17,26,0.4); font-style: italic; }
+
+  /* ── área de envio ── */
+  .drop-zone {
+    position: relative;
+    border: 1px dashed var(--line);
+    padding: 2rem 1rem 1.8rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    background: var(--paper-2);
+  }
+  .drop-zone:hover,
+  .drop-zone.over {
+    border-color: var(--maroon);
+    background: #fdf6e0;
+  }
+  .drop-zone.has-file {
+    border-style: solid;
+    border-color: var(--maroon);
+    background: #f8f0d8;
+  }
+
+  .drop-icon { margin-bottom: 0.65rem; }
+  .drop-icon svg { display: inline-block; }
+  .drop-text { font-size: 0.94rem; color: var(--ink-soft); font-style: italic; }
+  .drop-file-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.74rem;
+    color: var(--maroon);
+    margin-top: 0.55rem;
+    word-break: break-all;
+  }
+  input[type="file"] { display: none; }
+
+  /* carimbo de anexo */
+  .carimbo {
+    display: none;
+    position: absolute;
+    top: 0.75rem;
+    right: 0.85rem;
+    transform: rotate(5deg);
+    border: 2px double var(--crimson);
+    color: var(--crimson);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    padding: 0.28rem 0.55rem 0.24rem 0.8rem;
+    background: rgba(255,248,230,0.75);
+  }
+  .drop-zone.has-file .carimbo { display: block; }
+
+  /* ── dica de campo ── */
+  .field-hint {
+    font-size: 0.84rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-top: 0.4rem;
+    line-height: 1.55;
+  }
+
+  /* ── consentimento ── */
+  .consent label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-family: 'EB Garamond', Georgia, serif;
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 0.95rem;
+    font-weight: 400;
+    cursor: pointer;
+    line-height: 1.55;
+  }
+  .consent input[type="checkbox"] {
+    margin-top: 0.24rem;
+    width: auto;
+    accent-color: var(--maroon);
+  }
+  .consent a {
+    color: var(--maroon);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid var(--crimson);
+  }
+  .consent a:hover { color: var(--crimson); }
+
+  /* ── botão ── */
+  button[type="submit"] {
+    width: 100%;
+    padding: 0.95rem;
+    background: var(--maroon);
+    color: var(--paper);
+    border: 1px solid var(--maroon);
+    border-radius: 0;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    margin-top: 0.7rem;
+  }
+  button[type="submit"]:hover {
+    background: var(--paper);
+    color: var(--maroon);
+  }
+  button[type="submit"]:focus-visible {
+    outline: 1px dashed var(--crimson);
+    outline-offset: 3px;
+  }
+  button[type="submit"]:disabled {
+    background: var(--paper-3);
+    color: var(--ink-soft);
+    border-color: var(--line-soft);
+    cursor: not-allowed;
+  }
+
+  /* ── progresso ── */
+  #status-box { display: none; margin-top: 1.7rem; }
+
+  .progress-bar-track {
+    height: 3px;
+    background: var(--paper-3);
+    border: 1px solid var(--line-soft);
+    margin: 0.85rem 0;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--maroon);
+    transition: width 0.6s ease;
+    width: 0%;
+  }
+  .status-msg {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    text-align: center;
+  }
+
+  /* ── resultado ── */
+  #result-box { display: none; margin-top: 1.7rem; }
+
+  .result-success {
+    padding: 1.5rem 1.3rem;
+    border: 1px solid var(--ok);
+    background: #f2f4e6;
+    text-align: center;
+  }
+  .result-success p {
+    font-size: 0.98rem;
+    color: var(--ok);
+    margin-bottom: 1.1rem;
+  }
+  .btn-download {
+    display: inline-block;
+    padding: 0.8rem 1.8rem;
+    background: var(--maroon);
+    color: var(--paper);
+    text-decoration: none;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.74rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border: 1px solid var(--maroon);
+    transition: background 0.18s, color 0.18s;
+  }
+  .btn-download:hover {
+    background: var(--paper);
+    color: var(--maroon);
+  }
+
+  .result-error {
+    padding: 1.3rem;
+    border: 2px double var(--crimson);
+    background: #fbeee2;
+    font-size: 0.92rem;
+    color: var(--crimson);
+    line-height: 1.55;
+  }
+  .result-error strong {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  /* ── nota ── */
+  .nota {
+    font-size: 0.83rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-top: 1.6rem;
+    line-height: 1.65;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--line-soft);
+    text-align: center;
+  }
+
+  /* ── rodapé ── */
+  footer {
+    text-align: center;
+    padding: 1.35rem 1rem;
+    font-size: 0.84rem;
+    color: rgba(255,248,230,0.5);
+    background: var(--maroon-dark);
+    font-style: italic;
+    letter-spacing: 0.03em;
+    border-top: 1px solid rgba(255,248,230,0.14);
+  }
+  footer span { color: #e2c9a8; font-style: normal; }
+  footer .fl { font-style: normal; color: rgba(255,248,230,0.35); }
+
+  /* ── telas pequenas ── */
+  @media (max-width: 560px) {
+    header { padding: 0.8rem 1.1rem; gap: 0.9rem; }
+    header img { height: 42px; }
+    .seal { width: 40px; height: 40px; }
+    .header-text h1 { font-size: 1.2rem; letter-spacing: 0.18em; }
+    .header-text span { letter-spacing: 0.22em; font-size: 0.55rem; }
+    main { margin: 2rem auto; padding: 0 1rem; }
+    .card { padding: 2.3rem 1.4rem 2rem; }
+    .carimbo { top: 0.5rem; right: 0.55rem; }
+    ::placeholder { font-size: 0.85rem; }
+  }
+</style>
+<script>
+/* shim de pré-visualização: quando a página não é servida pelo FastAPI
+   (o logo em /static não existe), reescreve as rotas do servidor para
+   os arquivos locais. Em produção, não faz nada. */
+var CLIORA_PREVIEW = false;
+function clioraMarkPreview() {
+  CLIORA_PREVIEW = true;
+  document.querySelectorAll('a[href^="/"]').forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (h === '/privacidade') a.setAttribute('href', 'privacidade.html');
+    else if (h === '/comece') a.setAttribute('href', 'comece.html');
+    else if (h === '/') a.setAttribute('href', 'index.html');
+    else if (h.indexOf('/?') === 0) a.setAttribute('href', 'index.html' + h.slice(1));
+  });
+}
+</script>
+</head>
+<body>
+
+<header>
+  <img src="/static/logo.png" alt="Cliora"
+       onerror="this.style.display='none';document.getElementById('seal').style.display='block';">
+  <svg class="seal" id="seal" width="50" height="50" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="24" cy="24" r="21.5" fill="none" stroke="#fff8e6" stroke-width="1.1" opacity="0.9"/>
+    <circle cx="24" cy="24" r="17" fill="none" stroke="#fff8e6" stroke-width="0.7" opacity="0.55"/>
+    <path d="M24 1.5v3M24 43.5v3M1.5 24h3M43.5 24h3" stroke="#fff8e6" stroke-width="1" opacity="0.5"/>
+    <text x="24" y="31" text-anchor="middle" font-family="Trirong, serif" font-size="22" fill="#fff8e6">C</text>
+  </svg>
+  <div class="header-divider"></div>
+  <div class="header-text">
+    <h1>Cliora</h1>
+    <span>Transcrição de Documentos Históricos</span>
+  </div>
+</header>
+<div class="regra">❦</div>
+
+<main>
+  <div class="card">
+    <span class="etiqueta">Formulário · Nº I</span>
+    <h2 class="card-title">Enviar documento para transcrição</h2>
+
+    <div class="aviso-escopo">
+      Este serviço foi otimizado para documentos impressos ou datilografados em português,
+      do século XVIII em diante. Manuscritos e documentos anteriores a esse período podem
+      ser processados, mas sem garantia de qualidade: a avaliação do resultado é de
+      responsabilidade do usuário.
+    </div>
+
+    <form id="upload-form">
+      <div class="field">
+        <label for="codigo"><span class="num">I.</span>Código de convite</label>
+        <input type="text" id="codigo" name="codigo" placeholder="Recebido por e-mail ou WhatsApp"
+               style="text-transform:uppercase;" required>
+      </div>
+
+      <div class="field">
+        <label for="arquivo"><span class="num">II.</span>Arquivo PDF</label>
+        <div class="drop-zone" id="drop-zone">
+          <span class="carimbo">Anexado</span>
+          <div class="drop-icon">
+            <svg width="38" height="46" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M4 2h22l10 10v34H4z" stroke="#3a111a" stroke-width="1.4" fill="#fff8e6"/>
+              <path d="M26 2v10h10" stroke="#3a111a" stroke-width="1.4" fill="none"/>
+              <line x1="10" y1="21" x2="30" y2="21" stroke="#a42430" stroke-width="1"/>
+              <line x1="10" y1="27" x2="30" y2="27" stroke="#3a111a" stroke-width="1" opacity="0.55"/>
+              <line x1="10" y1="33" x2="23" y2="33" stroke="#3a111a" stroke-width="1" opacity="0.55"/>
+            </svg>
+          </div>
+          <div class="drop-text">Clique para selecionar ou arraste o PDF aqui</div>
+          <div class="drop-file-name" id="file-name"></div>
+          <input type="file" id="arquivo" name="arquivo" accept=".pdf" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="ano"><span class="num">III.</span>Ano do documento original</label>
+        <input type="number" id="ano" name="ano" min="1400" max="2025"
+               placeholder="Ex: 1879, 1942, 1978" required>
+        <p class="field-hint">Define o perfil de correção ortográfica: até 1910, o texto preserva a grafia histórica; de 1911 em diante, usa regras modernas. Use o ano em que foi escrito, não o da edição escaneada.</p>
+      </div>
+
+      <div class="field">
+        <label for="tipo"><span class="num">IV.</span>Tipo do documento</label>
+        <select id="tipo" name="tipo">
+          <option value="livro">Livro ou texto literário</option>
+          <option value="juridico">Documento jurídico (processo, acórdão, lei, decreto)</option>
+          <option value="periodico">Periódico (jornal, revista)</option>
+          <option value="administrativo">Documento administrativo (ofício, relatório, carta)</option>
+        </select>
+      </div>
+
+      <div class="field consent">
+        <label>
+          <input type="checkbox" id="lgpd-aceite" name="lgpd_aceite" required>
+          <span>Li e concordo com o tratamento de dados descrito na <a href="/privacidade" target="_blank">política de privacidade</a>.</span>
+        </label>
+      </div>
+
+      <button type="submit" id="btn-enviar">Transcrever documento</button>
+    </form>
+
+    <div id="status-box">
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <p class="status-msg" id="status-msg">Iniciando...</p>
+    </div>
+
+    <div id="result-box"></div>
+
+    <p class="nota">
+      Apenas arquivos PDF são aceitos. Para converter imagens para PDF: no Mac, abra no Preview
+      e exporte como PDF; no Windows, selecione as imagens e imprima para PDF.
+      O processamento pode levar alguns minutos dependendo do número de páginas.
+    </p>
+  </div>
+</main>
+
+<footer>
+  Universidade de Passo Fundo <span class="fl">❦</span> <span>Cliora</span> <span class="fl">❦</span> <em title="grafia histórica: s longo (ſ)">Tranſcrição de Documentos Históricos</em>
+</footer>
+
+<script>
+// preenche o codigo de convite automaticamente se vier na URL (?codigo=XXX)
+const paramsUrl = new URLSearchParams(window.location.search);
+const codigoParam = paramsUrl.get('codigo');
+if (codigoParam) {
+  document.getElementById('codigo').value = codigoParam.toUpperCase();
+}
+
+const dropZone  = document.getElementById('drop-zone');
+const fileInput = document.getElementById('arquivo');
+const fileName  = document.getElementById('file-name');
+const form      = document.getElementById('upload-form');
+const btnEnviar = document.getElementById('btn-enviar');
+const statusBox = document.getElementById('status-box');
+const resultBox = document.getElementById('result-box');
+const progressFill = document.getElementById('progress-fill');
+const statusMsg = document.getElementById('status-msg');
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('over');
+  if (e.dataTransfer.files[0]) {
+    fileInput.files = e.dataTransfer.files;
+    updateFileName(e.dataTransfer.files[0].name);
+  }
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) updateFileName(fileInput.files[0].name);
+});
+
+function updateFileName(name) {
+  fileName.textContent = name;
+  dropZone.classList.add('has-file');
+}
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  btnEnviar.disabled = true;
+  btnEnviar.textContent = 'Enviando...';
+  resultBox.style.display = 'none';
+  statusBox.style.display = 'block';
+  progressFill.style.width = '0%';
+  statusMsg.textContent = 'Enviando arquivo...';
+
+  const data = new FormData(form);
+
+  try {
+    const resp = await fetch('/upload', { method: 'POST', body: data });
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.detail || 'Erro no servidor');
+    }
+    const { job_id } = await resp.json();
+    aguardarResultado(job_id);
+  } catch (err) {
+    mostrarErro(err.message);
+    btnEnviar.disabled = false;
+    btnEnviar.textContent = 'Transcrever documento';
+  }
+});
+
+function aguardarResultado(jobId) {
+  const intervalo = setInterval(async () => {
+    try {
+      const resp = await fetch(`/status/${jobId}`);
+      const estado = await resp.json();
+      progressFill.style.width = estado.progresso + '%';
+      statusMsg.textContent = estado.mensagem || '';
+      if (estado.status === 'concluido') {
+        clearInterval(intervalo);
+        mostrarSucesso(jobId, estado.mensagem);
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = 'Transcrever documento';
+      } else if (estado.status === 'erro') {
+        clearInterval(intervalo);
+        mostrarErro(estado.mensagem);
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = 'Transcrever documento';
+      }
+    } catch { /* ignora erros de rede temporários */ }
+  }, 5000);
+}
+
+function mostrarSucesso(jobId, msg) {
+  statusBox.style.display = 'none';
+  resultBox.style.display = 'block';
+  resultBox.innerHTML = `
+    <div class="result-success">
+      <p>✓ Transcrição concluída — ${msg}</p>
+      <a class="btn-download" href="/download/${jobId}" download>
+        Baixar texto transcrito
+      </a>
+    </div>`;
+}
+
+function mostrarErro(msg) {
+  statusBox.style.display = 'none';
+  resultBox.style.display = 'block';
+  resultBox.innerHTML = `<div class="result-error"><strong>Erro</strong> — ${msg}</div>`;
+}
+</script>
+</body>
+</html>

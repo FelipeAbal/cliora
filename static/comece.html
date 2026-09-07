@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cliora — Bem-vindo ao Beta</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Trirong:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+  :root {
+    --paper:       #fff8e6;
+    --paper-2:     #f6edd4;
+    --paper-3:     #eee1c0;
+    --maroon:      #3a111a;
+    --maroon-dark: #280b12;
+    --crimson:     #a42430;
+    --line:        rgba(58,17,26,0.42);
+    --line-soft:   rgba(58,17,26,0.22);
+    --ink-soft:    rgba(58,17,26,0.68);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  ::selection { background: var(--crimson); color: var(--paper); }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 1.02rem;
+    background-color: var(--paper);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.23 0 0 0 0 0.07 0 0 0 0 0.10 0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
+      repeating-linear-gradient(90deg, rgba(58,17,26,0.025) 0 1px, transparent 1px 26px);
+    color: var(--maroon);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: var(--maroon-dark);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.15rem;
+    border-bottom: 1px solid rgba(255,248,230,0.16);
+  }
+  header img { height: 50px; width: auto; display: block; }
+  .seal { display: none; }
+  .header-divider { width: 1px; height: 40px; background: rgba(255,248,230,0.25); }
+  .header-text h1 {
+    font-family: 'Trirong', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--paper);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+  .header-text span {
+    display: block;
+    margin-top: 0.35rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: rgba(255,248,230,0.55);
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+  }
+
+  .regra {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 0.42rem 18%;
+    background: var(--maroon);
+    color: rgba(255,248,230,0.75);
+    font-size: 0.72rem;
+  }
+  .regra::before, .regra::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,248,230,0.4), transparent);
+  }
+
+  main {
+    flex: 1;
+    max-width: 720px;
+    width: 100%;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .card {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--maroon);
+    border-radius: 0;
+    padding: 3rem 2.7rem 2.6rem;
+    box-shadow:
+      0 1px 0 rgba(255,248,230,0.7) inset,
+      0 18px 38px -16px rgba(40,11,18,0.4);
+    animation: rise 0.55s ease both;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid var(--line);
+    pointer-events: none;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card { animation: none; }
+  }
+
+  .etiqueta {
+    position: absolute;
+    top: -0.62rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--maroon);
+    color: var(--paper);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 0.34rem 0.8rem 0.3rem 1.1rem;
+    white-space: nowrap;
+    z-index: 1;
+  }
+
+  .card-title {
+    font-family: 'Trirong', serif;
+    font-size: 1.55rem;
+    font-weight: 500;
+    color: var(--maroon);
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+  .card-title::after {
+    content: "";
+    display: block;
+    width: 88px;
+    height: 3px;
+    margin: 0.9rem auto 0;
+    border-top: 2px solid var(--maroon);
+    border-bottom: 1px solid var(--maroon);
+  }
+
+  .intro {
+    font-size: 1.02rem;
+    line-height: 1.7;
+    margin: 1.5rem 0 2.2rem;
+    text-align: center;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .secao { margin-bottom: 2rem; }
+
+  .secao h3 {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--maroon);
+    margin-bottom: 0.7rem;
+    padding-bottom: 0.45rem;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .secao h3 .num {
+    font-weight: 400;
+    color: var(--crimson);
+    letter-spacing: 0.05em;
+    margin-right: 0.5rem;
+  }
+
+  .secao ol, .secao ul {
+    padding-left: 1.4rem;
+    font-size: 0.97rem;
+    line-height: 1.75;
+  }
+  .secao li { margin-bottom: 0.4rem; }
+  .secao li::marker { color: var(--crimson); }
+
+  .secao p {
+    font-size: 0.97rem;
+    line-height: 1.7;
+  }
+
+  .destaque {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    line-height: 1.6;
+    border-left: 3px double var(--crimson);
+    padding: 0.45rem 0 0.45rem 1.05rem;
+    margin-top: 0.9rem;
+  }
+
+  .contato a {
+    color: var(--maroon);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid var(--crimson);
+  }
+  .contato a:hover { color: var(--crimson); }
+
+  .input {
+    width: 100%;
+    padding: 0.75rem 0.95rem;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    background: var(--paper-2);
+    color: var(--maroon);
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 0.8rem;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .input:focus {
+    outline: 1px dashed rgba(58,17,26,0.6);
+    outline-offset: 3px;
+    border-color: var(--maroon);
+    background: #fffdf3;
+  }
+  .input::placeholder {
+    color: rgba(58,17,26,0.4);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  .btn-acessar {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0.95rem;
+    background: var(--maroon);
+    color: var(--paper);
+    border: 1px solid var(--maroon);
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.18s, color 0.18s;
+    margin-top: 2rem;
+  }
+  .btn-acessar:hover {
+    background: var(--paper);
+    color: var(--maroon);
+  }
+
+  footer {
+    text-align: center;
+    padding: 1.35rem 1rem;
+    font-size: 0.84rem;
+    color: rgba(255,248,230,0.5);
+    background: var(--maroon-dark);
+    font-style: italic;
+    letter-spacing: 0.03em;
+    border-top: 1px solid rgba(255,248,230,0.14);
+  }
+  footer span { color: #e2c9a8; font-style: normal; }
+  footer .fl { font-style: normal; color: rgba(255,248,230,0.35); }
+
+  @media (max-width: 560px) {
+    header { padding: 0.8rem 1.1rem; gap: 0.9rem; }
+    header img { height: 42px; }
+    .seal { width: 40px; height: 40px; }
+    .header-text h1 { font-size: 1.2rem; letter-spacing: 0.18em; }
+    .header-text span { letter-spacing: 0.22em; font-size: 0.55rem; }
+    main { margin: 2rem auto; padding: 0 1rem; }
+    .card { padding: 2.4rem 1.4rem 2.1rem; }
+  }
+</style>
+<script>
+/* shim de pré-visualização (ver index.html) */
+var CLIORA_PREVIEW = false;
+function clioraMarkPreview() {
+  CLIORA_PREVIEW = true;
+  document.querySelectorAll('a[href^="/"]').forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (h === '/privacidade') a.setAttribute('href', 'privacidade.html');
+    else if (h === '/comece') a.setAttribute('href', 'comece.html');
+    else if (h === '/') a.setAttribute('href', 'index.html');
+    else if (h.indexOf('/?') === 0) a.setAttribute('href', 'index.html' + h.slice(1));
+  });
+}
+</script>
+</head>
+<body>
+
+<header>
+  <img src="/static/logo.png" alt="Cliora"
+       onerror="this.style.display='none';document.getElementById('seal').style.display='block';">
+  <svg class="seal" id="seal" width="50" height="50" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="24" cy="24" r="21.5" fill="none" stroke="#fff8e6" stroke-width="1.1" opacity="0.9"/>
+    <circle cx="24" cy="24" r="17" fill="none" stroke="#fff8e6" stroke-width="0.7" opacity="0.55"/>
+    <path d="M24 1.5v3M24 43.5v3M1.5 24h3M43.5 24h3" stroke="#fff8e6" stroke-width="1" opacity="0.5"/>
+    <text x="24" y="31" text-anchor="middle" font-family="Trirong, serif" font-size="22" fill="#fff8e6">C</text>
+  </svg>
+  <div class="header-divider"></div>
+  <div class="header-text">
+    <h1>Cliora</h1>
+    <span>Transcrição de Documentos Históricos</span>
+  </div>
+</header>
+<div class="regra">❦</div>
+
+<main>
+  <div class="card">
+    <span class="etiqueta">Guia · Beta fechado</span>
+    <h2 class="card-title">Bem-vindo ao beta fechado</h2>
+
+    <p class="intro">
+      Você está entre as poucas pessoas convidadas para testar o Cliora antes do lançamento
+      público. Muito obrigado por topar ajudar nessa fase. O Cliora transcreve documentos
+      históricos e jurídicos em português (impressos ou datilografados, do século XVIII em
+      diante), combinando OCR especializado com correção contextual por IA.
+    </p>
+
+    <div class="secao">
+      <h3><span class="num">I.</span>Como testar</h3>
+      <ol>
+        <li>Envie um PDF de um documento real que você já tenha à mão (um trecho de livro, um processo, um acórdão, uma carta, o que for do seu interesse)</li>
+        <li>Preencha o ano aproximado do documento e o tipo de documento</li>
+        <li>Aguarde o processamento e baixe o texto transcrito</li>
+      </ol>
+    </div>
+
+    <div class="secao">
+      <h3><span class="num">II.</span>Regras do beta</h3>
+      <ul>
+        <li>Só arquivos PDF são aceitos</li>
+        <li>Máximo de 10 páginas por documento</li>
+        <li>Máximo de 10 páginas por dia no total, mesmo em documentos diferentes</li>
+        <li>Manuscritos e documentos anteriores ao século XVIII podem ser processados, mas sem garantia de qualidade nesta fase</li>
+      </ul>
+      <div class="destaque">
+        O campo de ano não é burocracia: ele decide se o sistema usa ortografia histórica
+        (antes de 1911) ou moderna (1911 em diante). Errar o ano pode prejudicar bastante a
+        qualidade do resultado, use o ano em que o documento foi escrito, não o ano da digitalização.
+      </div>
+    </div>
+
+    <div class="secao">
+      <h3><span class="num">III.</span>Se algo der errado</h3>
+      <p class="contato">
+        O sistema tem proteções que podem, ocasionalmente, interromper um processamento com uma
+        mensagem de erro (por exemplo, se o documento demorar demais). Se isso acontecer, tente
+        novamente. Se persistir, ou se o resultado vier claramente errado, escreva para
+        <a href="mailto:felipeabal@upf.br">felipeabal@upf.br</a>, de preferência com o PDF em
+        anexo (ou um trecho dele).
+      </p>
+    </div>
+
+    <div class="secao">
+      <h3><span class="num">IV.</span>Depois de testar</h3>
+      <p>
+        Vamos pedir um retorno rápido sobre a experiência, com poucas perguntas. Depois de
+        testar, preencha o formulário:
+        <a href="https://forms.gle/tJpfxex5viEWq9oRA" target="_blank">forms.gle/tJpfxex5viEWq9oRA</a>.
+      </p>
+    </div>
+
+    <div class="secao">
+      <h3><span class="num">V.</span>Código de convite</h3>
+      <p>Digite o código que você recebeu por e-mail ou WhatsApp para acessar a ferramenta.</p>
+      <input type="text" id="codigo-convite" class="input" placeholder="Ex: AB12CD">
+    </div>
+
+    <a class="btn-acessar" href="#" id="btn-acessar">Acessar o Cliora →</a>
+
+    <script>
+      document.getElementById('btn-acessar').addEventListener('click', function(e) {
+        e.preventDefault();
+        var codigo = document.getElementById('codigo-convite').value.trim();
+        if (!codigo) {
+          alert('Digite o código de convite recebido para continuar.');
+          return;
+        }
+        var base = CLIORA_PREVIEW ? 'transcrever.html' : '/transcrever';
+        window.location.href = base + '?codigo=' + encodeURIComponent(codigo);
+      });
+    </script>
+  </div>
+</main>
+
+<footer>
+  Universidade de Passo Fundo <span class="fl">❦</span> <span>Cliora</span> <span class="fl">❦</span> Beta fechado
+</footer>
+
+</body>
+</html>

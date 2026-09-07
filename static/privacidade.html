@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cliora — Privacidade e Tratamento de Dados</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Trirong:ital,wght@0,400;0,500;0,600;1,400&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+  :root {
+    --paper:       #fff8e6;
+    --paper-2:     #f6edd4;
+    --maroon:      #3a111a;
+    --maroon-dark: #280b12;
+    --crimson:     #a42430;
+    --line:        rgba(58,17,26,0.42);
+    --line-soft:   rgba(58,17,26,0.22);
+    --ink-soft:    rgba(58,17,26,0.68);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  ::selection { background: var(--crimson); color: var(--paper); }
+
+  body {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 1.02rem;
+    background-color: var(--paper);
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.23 0 0 0 0 0.07 0 0 0 0 0.10 0 0 0 0.045 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
+      repeating-linear-gradient(90deg, rgba(58,17,26,0.025) 0 1px, transparent 1px 26px);
+    color: var(--maroon);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: var(--maroon-dark);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.15rem;
+    border-bottom: 1px solid rgba(255,248,230,0.16);
+  }
+  header img { height: 50px; width: auto; display: block; }
+  .seal { display: none; }
+  .header-divider { width: 1px; height: 40px; background: rgba(255,248,230,0.25); }
+  .header-text h1 {
+    font-family: 'Trirong', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--paper);
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+  .header-text span {
+    display: block;
+    margin-top: 0.35rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: rgba(255,248,230,0.55);
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+  }
+
+  .regra {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 0.42rem 18%;
+    background: var(--maroon);
+    color: rgba(255,248,230,0.75);
+    font-size: 0.72rem;
+  }
+  .regra::before, .regra::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,248,230,0.4), transparent);
+  }
+
+  main {
+    flex: 1;
+    max-width: 720px;
+    width: 100%;
+    margin: 3rem auto;
+    padding: 0 1.5rem;
+  }
+
+  .card {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--maroon);
+    border-radius: 0;
+    padding: 3rem 2.7rem 2.6rem;
+    box-shadow:
+      0 1px 0 rgba(255,248,230,0.7) inset,
+      0 18px 38px -16px rgba(40,11,18,0.4);
+    animation: rise 0.55s ease both;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid var(--line);
+    pointer-events: none;
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .card { animation: none; }
+  }
+
+  .etiqueta {
+    position: absolute;
+    top: -0.62rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--maroon);
+    color: var(--paper);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 0.34rem 0.8rem 0.3rem 1.1rem;
+    white-space: nowrap;
+    z-index: 1;
+  }
+
+  .card-title {
+    font-family: 'Trirong', serif;
+    font-size: 1.45rem;
+    font-weight: 500;
+    color: var(--maroon);
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+  .card-title::after {
+    content: "";
+    display: block;
+    width: 88px;
+    height: 3px;
+    margin: 0.9rem auto 0;
+    border-top: 2px solid var(--maroon);
+    border-bottom: 1px solid var(--maroon);
+  }
+
+  .preambulo {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin: 1.5rem 0 2rem;
+    text-align: center;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .item { margin-bottom: 1.7rem; }
+  .item h3 {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--maroon);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .item h3::before {
+    content: "§";
+    color: var(--crimson);
+    margin-right: 0.5rem;
+    font-weight: 400;
+  }
+  .item p {
+    font-size: 0.97rem;
+    line-height: 1.7;
+  }
+  .item a {
+    color: var(--maroon);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid var(--crimson);
+  }
+  .item a:hover { color: var(--crimson); }
+
+  .voltar {
+    display: inline-block;
+    margin-top: 1.3rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line-soft);
+    padding-bottom: 0.15rem;
+  }
+  .voltar:hover { color: var(--maroon); border-color: var(--crimson); }
+
+  footer {
+    text-align: center;
+    padding: 1.35rem 1rem;
+    font-size: 0.84rem;
+    color: rgba(255,248,230,0.5);
+    background: var(--maroon-dark);
+    font-style: italic;
+    letter-spacing: 0.03em;
+    border-top: 1px solid rgba(255,248,230,0.14);
+  }
+  footer span { color: #e2c9a8; font-style: normal; }
+  footer .fl { font-style: normal; color: rgba(255,248,230,0.35); }
+
+  @media (max-width: 560px) {
+    header { padding: 0.8rem 1.1rem; gap: 0.9rem; }
+    header img { height: 42px; }
+    .seal { width: 40px; height: 40px; }
+    .header-text h1 { font-size: 1.2rem; letter-spacing: 0.18em; }
+    .header-text span { letter-spacing: 0.22em; font-size: 0.55rem; }
+    main { margin: 2rem auto; padding: 0 1rem; }
+    .card { padding: 2.4rem 1.4rem 2.1rem; }
+  }
+</style>
+<script>
+/* shim de pré-visualização (ver index.html) */
+var CLIORA_PREVIEW = false;
+function clioraMarkPreview() {
+  CLIORA_PREVIEW = true;
+  document.querySelectorAll('a[href^="/"]').forEach(function (a) {
+    var h = a.getAttribute('href');
+    if (h === '/privacidade') a.setAttribute('href', 'privacidade.html');
+    else if (h === '/comece') a.setAttribute('href', 'comece.html');
+    else if (h === '/') a.setAttribute('href', 'index.html');
+    else if (h.indexOf('/?') === 0) a.setAttribute('href', 'index.html' + h.slice(1));
+  });
+}
+</script>
+</head>
+<body>
+
+<header>
+  <img src="/static/logo.png" alt="Cliora"
+       onerror="this.style.display='none';document.getElementById('seal').style.display='block';">
+  <svg class="seal" id="seal" width="50" height="50" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <circle cx="24" cy="24" r="21.5" fill="none" stroke="#fff8e6" stroke-width="1.1" opacity="0.9"/>
+    <circle cx="24" cy="24" r="17" fill="none" stroke="#fff8e6" stroke-width="0.7" opacity="0.55"/>
+    <path d="M24 1.5v3M24 43.5v3M1.5 24h3M43.5 24h3" stroke="#fff8e6" stroke-width="1" opacity="0.5"/>
+    <text x="24" y="31" text-anchor="middle" font-family="Trirong, serif" font-size="22" fill="#fff8e6">C</text>
+  </svg>
+  <div class="header-divider"></div>
+  <div class="header-text">
+    <h1>Cliora</h1>
+    <span>Transcrição de Documentos Históricos</span>
+  </div>
+</header>
+<div class="regra">❦</div>
+
+<main>
+  <div class="card">
+    <span class="etiqueta">Aviso legal · LGPD</span>
+    <h2 class="card-title">Aviso sobre tratamento de dados</h2>
+
+    <p class="preambulo">
+      Ao usar o Cliora durante esta fase de testes, você concorda com o seguinte:
+    </p>
+
+    <div class="item">
+      <h3>Dados coletados</h3>
+      <p>O conteúdo do documento PDF que você envia, o ano e tipo informados e o código de convite utilizado (usado só para controle de uso diário durante o beta).</p>
+    </div>
+
+    <div class="item">
+      <h3>Como os dados são usados</h3>
+      <p>O conteúdo do documento passa por reconhecimento de texto (OCR) e por uma etapa de correção automática assistida por inteligência artificial, antes de o resultado ser disponibilizado para download.</p>
+    </div>
+
+    <div class="item">
+      <h3>Armazenamento</h3>
+      <p>Durante esta fase de testes, os documentos enviados e os resultados gerados ficam armazenados no servidor por prazo indeterminado. Uma política de retenção definitiva será estabelecida antes do lançamento público.</p>
+    </div>
+
+    <div class="item">
+      <h3>Responsabilidade do usuário</h3>
+      <p>Você é responsável por garantir que tem base legal para enviar o documento, especialmente se ele contiver dados pessoais de terceiros (nomes de partes em processos judiciais, por exemplo). Evite enviar documentos com dados sensíveis de terceiros sem autorização.</p>
+    </div>
+
+    <div class="item">
+      <h3>Seus direitos</h3>
+      <p>Você pode solicitar a exclusão dos seus dados e dos documentos enviados a qualquer momento, escrevendo para <a href="mailto:felipeabal@upf.br">felipeabal@upf.br</a>.</p>
+    </div>
+
+    <div class="item">
+      <h3>Responsável pelo tratamento</h3>
+      <p>Felipe Cittolin Abal, pesquisador independente.</p>
+    </div>
+
+    <a class="voltar" href="/">← Voltar para o Cliora</a>
+  </div>
+</main>
+
+<footer>
+  Universidade de Passo Fundo <span class="fl">❦</span> <span>Cliora</span> <span class="fl">❦</span> Beta fechado
+</footer>
+
+</body>
+</html>
